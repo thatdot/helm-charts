@@ -47,7 +47,7 @@ To uninstall the chart:
 
 ## Trial
 
-Quine Enterprise is priopriatary software. A free trial evaluation license is
+Quine Enterprise is proprietary software. A free trial evaluation license is
 available from [thatdot.com](https://www.thatdot.com/free-trial/). When using
 this helm chart with a trial license, `Values.trial.enabled` must be set to
 true and the `Values.trial.email` and `Values.trial.apiKey` fields must be set.
