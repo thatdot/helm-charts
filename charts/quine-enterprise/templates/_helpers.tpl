@@ -1,0 +1,125 @@
+{{/*
+Expand the name of the chart.
+*/}}
+{{- define "quine-enterprise.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
+*/}}
+{{- define "quine-enterprise.fullname" -}}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "quine-enterprise.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Common labels
+*/}}
+{{- define "quine-enterprise.labels" -}}
+helm.sh/chart: {{ include "quine-enterprise.chart" . }}
+{{ include "quine-enterprise.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "quine-enterprise.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "quine-enterprise.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "quine-enterprise.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "quine-enterprise.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+Persistence Config Section
+*/}}
+{{- define "quine-enterprise.persistenceConfiguration" -}}
+-Dquine.persistence.journal-enabled={{ .Values.persistence.journalEnabled }}
+-Dquine.persistence.snapshot-schedule={{ .Values.persistence.snapshotSchedule }}
+-Dquine.persistence.snapshot-singleton={{ .Values.persistence.snapshotSingleton }}
+-Dquine.persistence.standing-query-schedule={{ .Values.persistence.standingQuerySchedule }}
+-Dquine.persistence.effect-order={{ .Values.persistence.effectOrder }}
+{{- end }}
+
+{{/*
+Store Config Section
+*/}}
+{{- define "quine-enterprise.storeConfiguration" -}}
+{{- if .Values.cassandra.enabled }}
+
+-Dquine.store.type=cassandra
+-Dquine.store.keyspace={{ .Values.cassandra.keyspace }}
+-Dquine.store.should-create-keyspace={{ .Values.cassandra.shouldCreateKeyspace }}
+-Dquine.store.should-create-tables={{ .Values.cassandra.shouldCreateTables }}
+-Dquine.store.replication-factor={{ .Values.cassandra.replicationFactor }}
+-Dquine.store.read-consistency={{ .Values.cassandra.readConsistency }}
+-Dquine.store.write-consistency={{ .Values.cassandra.writeConsistency }}
+-Dquine.store.local-datacenter={{ .Values.cassandra.localDatacenter }}
+-Dquine.store.read-timeout={{ .Values.cassandra.readTimeout }}
+-Dquine.store.write-timeout={{ .Values.cassandra.writeTimeout }}
+
+{{- if .Values.cassandra.plaintextAuth.enabled }}
+-Ddatastax-java-driver.advanced.auth-provider.class=PlainTextAuthProvider
+-Ddatastax-java-driver.advanced.auth-provider.username={{ .Values.cassandra.plaintextAuth.username }}
+-Ddatastax-java-driver.advanced.auth-provider.password={{ .Values.cassandra.plaintextAuth.password }}
+{{- end }}
+
+{{- else }}
+-Dquine.store.type=empty
+{{- end }}
+{{- end }}
+
+{{/*
+Metrics Configuration Section
+*/}}
+{{- define "quine-enterprise.metricsConfiguration" -}}
+{{- if .Values.metrics.influx.enabled }}
+-Dquine.metrics-reporters.1.type=influxdb
+-Dquine.metrics-reporters.1.database={{ .Values.metrics.influx.database }}
+-Dquine.metrics-reporters.1.period={{ .Values.metrics.influx.period }}
+-Dquine.metrics-reporters.1.scheme={{ .Values.metrics.influx.scheme }}
+-Dquine.metrics-reporters.1.host={{ .Values.metrics.influx.host }}
+-Dquine.metrics-reporters.1.port={{ .Values.metrics.influx.port }}
+{{- end }}
+{{- end }}
+
+{{/*
+Trial Configuration Section
+*/}}
+{{- define "quine-enterprise.trialConfiguration" -}}
+{{- if .Values.trial.enabled }}
+-Dquine.trial.email={{ required "If trial version is enabled, Values.trial.email must be set" .Values.trial.email }}
+-Dquine.trial.api-key={{ required "If trial version is enabled, Values.trial.apiKey must be set" .Values.trial.apiKey }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "quine-enterprise.fullname" . }}-seed
+  labels:
+    {{- include "quine-enterprise.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+  - port: 25520
+    protocol: TCP
+    targetPort: 25520
+    name: cluster
+  selector:
+    {{- include "quine-enterprise.selectorLabels" . | nindent 4 }}

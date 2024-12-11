@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "quine-enterprise.fullname" . }}
+  labels:
+    {{- include "quine-enterprise.labels" . | nindent 4 }}
+spec:
+  replicas: {{ add .Values.hostCount .Values.hotSpareCount }}
+  selector:
+    matchLabels:
+      {{- include "quine-enterprise.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "quine-enterprise.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.memberTerminationGracePeriod }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: QUINE_SEED_DNS
+            value: {{ include "quine-enterprise.fullname" . }}-seed
+          - name: CASSANDRA_ENDPOINTS
+            value: {{ .Values.cassandra.endpoints }}
+          - name: JDK_JAVA_OPTIONS 
+            value: |
+              -Dquine.cluster.cluster-join.type=dns-entry 
+              -Dthatdot.loglevel={{ .Values.thatdot.logLevel }} 
+              -Dquine.cluster.target-size={{ .Values.hostCount }}
+              -Dpekko.coordinated-shutdown.phases.before-cluster-shutdown.timeout="{{ sub .Values.memberTerminationGracePeriod 5 }} seconds"
+              -Dquine.id.type=uuid
+              -Dquine.id.partitioned=true
+              {{ include "quine-enterprise.persistenceConfiguration" . | nindent 14 }}
+              {{ include "quine-enterprise.storeConfiguration" . | nindent 14 }}
+              {{ include "quine-enterprise.metricsConfiguration" . | nindent 14 }}
+              {{ include "quine-enterprise.trialConfiguration" . | nindent 14 }}
+              {{ .Values.extraJdkArgs }}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/admin/liveness
+              port: 8080
+            initialDelaySeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/v1/admin/liveness
+              port: 8080
+            initialDelaySeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

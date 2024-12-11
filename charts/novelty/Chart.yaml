@@ -1,0 +1,6 @@
+apiVersion: v2
+name: novelty
+description: thatDot Novelty Detector Helm Chart
+
+version: 0.1.0
+appVersion: 0.13.6
