@@ -20,7 +20,7 @@ cassandra:
   shouldCreateKeyspace: true
   shouldCreateTables: true
 
-# Evalutation resource settings, should increase to 3-32cpu and at least 15Gi memory for production
+# Evaluation resource settings, should increase to 3-32cpu and at least 15Gi memory for production
 resources:
   requests:
     cpu: 2
