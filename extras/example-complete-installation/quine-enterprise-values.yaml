@@ -1,0 +1,36 @@
+
+hostCount: 3
+
+trial:
+  enabled: true
+  email: ""
+  apiKey: ""
+
+service:
+  type: ClusterIP
+
+# Settings for using cassandra cluster as persistor
+cassandra:
+  enabled: true
+  endpoints: "quine-enterprise-store-cassandra"
+  plaintextAuth:
+    enabled: true
+    username: cassandra
+    password: cassandra
+  shouldCreateKeyspace: true
+  shouldCreateTables: true
+
+# Evalutation resource settings, should increase to 3-32cpu and at least 15Gi memory for production
+resources:
+  requests:
+    cpu: 2
+    memory: 7Gi
+  limits:
+    cpu: 4
+    memory: 7Gi
+
+# Settings for influxDB metrics.
+metrics:
+  influx:
+    enabled: true
+    host: influx-influxdb

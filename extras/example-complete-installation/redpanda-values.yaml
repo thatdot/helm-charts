@@ -1,0 +1,16 @@
+tls:
+  enabled: false
+
+external:
+  enabled: false
+
+statefulset:
+  replicas: 1
+
+storage:
+  persistantVolume:
+    size: 100Gi
+
+config:
+  cluster:
+    default_topic_replications: 1                                # Default replication factor for new topics

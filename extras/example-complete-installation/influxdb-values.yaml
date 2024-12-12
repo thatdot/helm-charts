@@ -1,0 +1,10 @@
+
+image:
+  tag: 1.11.8-alpine
+
+initScripts:
+  enabled: true
+  scripts:
+    metrics.sh: |
+      #!/bin/bash
+      influx --execute 'create database metrics'

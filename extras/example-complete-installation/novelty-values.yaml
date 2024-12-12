@@ -1,0 +1,4 @@
+trial:
+  enabled: true
+  email: ""
+  apiKey: ""
