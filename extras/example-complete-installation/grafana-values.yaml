@@ -7,7 +7,7 @@ datasources:
    apiVersion: 1
    datasources:
       # <string, required> name of the datasource. Required
-    - name: Streaming Graph Metrics (InfluxDB)
+    - name: Quine Enterprise Metrics (InfluxDB)
       # <string, required> datasource type. Required
       type: influxdb
       # <string, required> access mode. proxy or direct (Server or Browser in the UI). Required

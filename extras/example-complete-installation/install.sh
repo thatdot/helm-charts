@@ -42,7 +42,7 @@ helm upgrade \
     --values novelty-values.yaml
 
 # Cassandra Helm chart
-# Used as persistor for streaming graph (required).
+# Used as persistor for Quine Enterprise (required).
 # Although it is possible to use any cassandra-compatible 
 #   database such as ScyllaDB.
 helm upgrade \
@@ -60,7 +60,7 @@ helm upgrade \
     quine-enterprise-store \
     oci://registry-1.docker.io/bitnamicharts/cassandra
 
-# Streaming Graph Helm chart
+# Quine Enterprise Helm chart
 helm upgrade \
     --install \
     --namespace "$kube_namespace" \

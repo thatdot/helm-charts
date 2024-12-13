@@ -10,10 +10,10 @@ Grafana.
 
 ### Prerequisites
 
-* Sign up for Novelty and Streaming Graph Trial at
+* Sign up for Novelty and Quine Enterprise Trial at
   [thatdot.com](https://www.thatdot.com/free-trial/)
-  * Add email address and API key for Streaming Graph to
-    streaming-graph-values.yaml
+  * Add email address and API key for Quine Enterprise (also called thatDot
+    Streaming Graph) to quine-enterprise-values.yaml
   * Add email address and API key for Novelty to novelty-values.yaml
   * **NOTE:** You will receive the API key via email. A separate key must be
     used for each unique product.
