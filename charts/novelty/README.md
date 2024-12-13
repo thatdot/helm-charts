@@ -12,7 +12,9 @@ Helm's [documentation](https://helm.sh/docs) to get started.
 
 Once Helm has been set up correctly, add the repo as follows:
 
-  helm repo add thatdot https://helm.thatdot.com
+```
+helm repo add thatdot https://helm.thatdot.com
+```
 
 If you had already added this repo earlier, run `helm repo update` to retrieve
 the latest versions of the packages.  You can then run `helm search repo
@@ -20,11 +22,15 @@ thatdot` to see the charts.
 
 To install the quine-enterprise chart:
 
-    helm install my-novelty thatdot/novelty
+```
+helm install my-novelty thatdot/novelty
+```
 
 To uninstall the chart:
 
-    helm delete my-novelty
+```
+helm delete my-novelty
+```
 
 ## Trial
 
