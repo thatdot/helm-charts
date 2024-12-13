@@ -3,6 +3,15 @@ entries:
   novelty:
   - apiVersion: v2
     appVersion: 0.13.6
+    created: "2024-12-13T18:52:09.590251929Z"
+    description: thatDot Novelty Detector Helm Chart
+    digest: 324c29dc2d737db69b658d795a1303ca60dd350991a0f1015c9f60b593f27f51
+    name: novelty
+    urls:
+    - https://github.com/thatdot/helm-charts/releases/download/novelty-0.4.1/novelty-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
+    appVersion: 0.13.6
     created: "2024-12-12T21:27:46.134314993Z"
     description: thatDot Novelty Detector Helm Chart
     digest: a4c607cf5d7a175d92abbed15bde75d54d50f489b75d0a024dddfe6c7f530556
@@ -29,6 +38,16 @@ entries:
     - https://github.com/thatdot/helm-charts/releases/download/novelty-0.2.0/novelty-0.2.0.tgz
     version: 0.2.0
   quine-enterprise:
+  - apiVersion: v2
+    appVersion: 1.8.1
+    created: "2024-12-13T18:52:09.737799265Z"
+    description: A Helm chart for creating a thatDot Quine Enterprise cluster
+    digest: 1e2901642a9b0320465f85452c763ff9a73cad189d720d68ab12b59aa616f779
+    name: quine-enterprise
+    type: application
+    urls:
+    - https://github.com/thatdot/helm-charts/releases/download/quine-enterprise-0.4.1/quine-enterprise-0.4.1.tgz
+    version: 0.4.1
   - apiVersion: v2
     appVersion: 1.8.1
     created: "2024-12-12T21:27:46.266998601Z"
@@ -69,4 +88,4 @@ entries:
     urls:
     - https://github.com/thatdot/helm-charts/releases/download/quine-enterprise-0.2.0/quine-enterprise-0.2.0.tgz
     version: 0.2.0
-generated: "2024-12-12T21:27:46.267023527Z"
+generated: "2024-12-13T18:52:09.737829321Z"
