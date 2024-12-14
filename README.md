@@ -40,3 +40,28 @@ on Kubernetes.  This Helm chart works for both the trial version with a trial
 license and the full licensed version. Free trial licenses are available at
 [thatdot.com](https://www.thatdot.com/free-trial/).
 
+## Extras
+
+### Example Installation
+
+[README.md](extras/example-complete-installation/README.md)
+
+This directory contains an example installation of thatDot Quine Enterprise and
+Novelty. The included Cassandra persistor is required by the thatDot Quine
+Enterprise cluster. Also included are optional components of a RedPanda (Kafka)
+cluster for ingest/output and a monitoring stack consisting of InfluxDB and
+Grafana.
+
+### Persistor
+
+[README.md](extras/persistor/README.md)
+
+Use these scripts to easily setup a cassandra compatible persistor for a Quine
+instance or Quine Enterprise cluster.
+
+### Monitoring Stack
+
+[README.md](extras/monitoring-stack/README.md)
+
+Use these scripts to easily setup a monitoring stack for a Quine instance or
+Quine Enterprise cluster.
