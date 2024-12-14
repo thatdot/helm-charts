@@ -12,4 +12,4 @@ fi
 
 ns="$KUBE_NAMESPACE"
 
-helm uninstall quine-enterprise-store
+helm --namespace "$ns" uninstall quine-enterprise-store

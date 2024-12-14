@@ -3,7 +3,7 @@
 Use these scripts to easily setup a cassandra compatible persistor for a Quine
 instance or Quine Enterprise cluster.
 
-This extra uses Apache Cassandra via the [Bitnami Cassandra Helm
+This extra installs Apache Cassandra via the [Bitnami Cassandra Helm
 chart](https://artifacthub.io/packages/helm/bitnami/cassandra)
 
 ### Usage
