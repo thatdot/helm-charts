@@ -22,7 +22,7 @@ helm upgrade influx influxdata/influxdb \
     --values influxdb-values.yaml
 
 # Grafana Helm chart
-kubectl apply -f grafana-secret.yaml --namespace "$kube_namespace"
+kubectl apply -f grafana-secret.yaml --namespace "$ns"
 helm repo add grafana https://grafana.github.io/helm-charts
 helm upgrade grafana grafana/grafana \
     --install \
