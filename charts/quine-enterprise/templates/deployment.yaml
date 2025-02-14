@@ -41,6 +41,7 @@ spec:
             value: {{ .Values.cassandra.endpoints }}
           - name: JDK_JAVA_OPTIONS 
             value: |
+              -Dconfig.override_with_env_vars=true
               -Dquine.cluster.cluster-join.type=dns-entry 
               -Dthatdot.loglevel={{ .Values.thatdot.logLevel }} 
               -Dquine.cluster.target-size={{ .Values.hostCount }}
@@ -52,6 +53,7 @@ spec:
               {{ include "quine-enterprise.metricsConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.trialConfiguration" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
+          {{ include "quine-enterprise.cassandraAuthEnv" . | nindent 10 }}
           livenessProbe:
             httpGet:
               path: /api/v1/admin/liveness

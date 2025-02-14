@@ -33,6 +33,12 @@ cassandra:
     # Enable this section use basic auth with cassandra
     enabled: false
     username: "cassandra"
+    passwordExistingSecret: {}
+      # # Set passwordExisting secret to use configuration from a kubernetes secret
+      # # overrides cassandra.plaintextAuth.password
+      # # Ex:
+      # name: "my-secret"
+      # key: "my-secret-key"
     password: "cassandra"
 
   # Configured endpoints a comma-separated list of cassandra cluster URLs

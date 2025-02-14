@@ -89,16 +89,34 @@ Store Config Section
 -Dquine.store.read-timeout={{ .Values.cassandra.readTimeout }}
 -Dquine.store.write-timeout={{ .Values.cassandra.writeTimeout }}
 
-{{- if .Values.cassandra.plaintextAuth.enabled }}
--Ddatastax-java-driver.advanced.auth-provider.class=PlainTextAuthProvider
--Ddatastax-java-driver.advanced.auth-provider.username={{ .Values.cassandra.plaintextAuth.username }}
--Ddatastax-java-driver.advanced.auth-provider.password={{ .Values.cassandra.plaintextAuth.password }}
-{{- end }}
-
 {{- else }}
 -Dquine.store.type=empty
 {{- end }}
 {{- end }}
+
+{{/*
+Cassandra Auth Environment
+*/}}
+{{- define "quine-enterprise.cassandraAuthEnv" -}}
+{{- if .Values.cassandra.plaintextAuth.enabled }}
+- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_class
+  value: PlainTextAuthProvider
+- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_username
+  value: {{ .Values.cassandra.plaintextAuth.username }}
+- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_password
+{{- if .Values.cassandra.plaintextAuth.passwordExistingSecret }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, name must be set"
+               .Values.cassandra.plaintextAuth.passwordExistingSecret.name }}
+      key: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, key must be set" 
+              .Values.cassandra.plaintextAuth.passwordExistingSecret.key }}
+{{- else }}
+  value: {{ .Values.cassandra.plaintextAuth.password }}
+{{- end }}
+{{- end }}
+{{- end }}
+
 
 {{/*
 Metrics Configuration Section
