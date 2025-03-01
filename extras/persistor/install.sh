@@ -20,7 +20,7 @@ helm upgrade \
     --install --wait --timeout 10m0s \
     --version 11.3.7 \
     --namespace "$ns" \
-    --set replicaCount=1 \
+    --set replicaCount=3 \
     --set dbUser.user=cassandra \
     --set dbUser.password=cassandra \
     --set persistence.size=100Gi \
