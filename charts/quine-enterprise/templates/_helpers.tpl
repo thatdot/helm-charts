@@ -62,6 +62,15 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Cluster Join Type
+*/}}
+{{- define "quine-enterprise.clusterJoinTypeConfiguration" -}}
+{{ if gt .Values.hostCount 1 }}
+-Dquine.cluster.cluster-join.type=dns-entry 
+{{- end }}
+{{- end }}
+
+{{/*
 Persistence Config Section
 */}}
 {{- define "quine-enterprise.persistenceConfiguration" -}}

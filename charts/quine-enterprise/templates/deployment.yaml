@@ -42,12 +42,12 @@ spec:
           - name: JDK_JAVA_OPTIONS 
             value: |
               -Dconfig.override_with_env_vars=true
-              -Dquine.cluster.cluster-join.type=dns-entry 
               -Dthatdot.loglevel={{ .Values.thatdot.logLevel }} 
               -Dquine.cluster.target-size={{ .Values.hostCount }}
               -Dpekko.coordinated-shutdown.phases.before-cluster-shutdown.timeout="{{ sub .Values.memberTerminationGracePeriod 5 }} seconds"
               -Dquine.id.type=uuid
               -Dquine.id.partitioned=true
+              {{ include "quine-enterprise.clusterJoinTypeConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.persistenceConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.storeConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.metricsConfiguration" . | nindent 14 }}
