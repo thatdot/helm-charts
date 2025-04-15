@@ -25,13 +25,23 @@ spec:
               {{ .Values.extraJdkArgs }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
-          readinessProbe:
-            httpGet:
-              path: /api/v1/admin/liveness
-              port: 8080
-            initialDelaySeconds: 5
           livenessProbe:
             httpGet:
               path: /api/v1/admin/liveness
               port: 8080
             initialDelaySeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/v1/admin/liveness
+              port: 8080
+            initialDelaySeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -154,5 +154,12 @@ tolerations: []
 
 affinity: {}
 
+# Use these values to attach mount volumes to the Quine container for each pod
+volumes: []
+volumeMounts: []
+
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""
+
+# Uncomment to override service account
+# serviceAccountName: ""

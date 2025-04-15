@@ -33,4 +33,3 @@ resources:
     
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""
-
