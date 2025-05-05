@@ -139,6 +139,25 @@ NGINX Basic Auth
 {{- end }}
 
 {{/*
+Basic Auth supporting volumes and volume mounts
+*/}}
+{{- define "quine-enterprise.basicAuthVolumes" }}
+{{- if .Values.basicAuth.enabled }}
+- name: credentials-volume
+  secret:
+    secretName: credentials
+{{- end }}
+{{- end }}
+
+{{- define "quine-enterprise.basicAuthVolumeMounts" }}
+{{- if .Values.basicAuth.enabled }}
+- name: credentials-volume
+  readOnly: true
+  mountPath: /credentials
+{{- end }}
+{{- end }}
+
+{{/*
 Liveness and Readiness Probes
 */}}
 {{- define "quine-enterprise.probes" -}}

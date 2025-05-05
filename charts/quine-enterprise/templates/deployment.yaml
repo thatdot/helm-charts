@@ -59,16 +59,18 @@ spec:
           {{ include "quine-enterprise.probes" . | nindent 10 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- end }}
+            {{ include "quine-enterprise.basicAuthVolumeMounts" . | nindent 12 }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
-      {{- with .Values.volumes }}
       volumes:
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
+        {{ include "quine-enterprise.basicAuthVolumes" . | nindent 8 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
