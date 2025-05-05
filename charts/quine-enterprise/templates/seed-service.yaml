@@ -1,3 +1,4 @@
+{{- if gt (int .Values.hostCount) 1 }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,3 +15,4 @@ spec:
     name: cluster
   selector:
     {{- include "quine-enterprise.selectorLabels" . | nindent 4 }}
+{{- end }}
