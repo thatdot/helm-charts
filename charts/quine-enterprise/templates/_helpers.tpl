@@ -126,6 +126,17 @@ Cassandra Auth Environment
 {{- end }}
 {{- end }}
 
+{{/*
+NGINX Basic Auth
+*/}}
+{{- define "quine-enterprise.basicAuth" -}}
+{{- if .Values.basicAuth.enabled }}
+- name: USE_NGINX
+  value: "true"
+- name: USE_BASIC_AUTH
+  value: "true"
+{{- end}}
+{{- end}}
 
 {{/*
 Metrics Configuration Section

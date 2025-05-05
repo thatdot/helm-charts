@@ -106,6 +106,10 @@ metrics:
     host: ""
     port: 8086
 
+# Enable Basic Authentication with NGINX
+basicAuth:
+  enabled: false
+  htpasswd: ""
 
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
 image:
