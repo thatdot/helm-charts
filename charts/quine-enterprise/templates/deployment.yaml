@@ -56,16 +56,7 @@ spec:
               {{ .Values.extraJdkArgs }}
           {{ include "quine-enterprise.cassandraAuthEnv" . | nindent 10 }}
           {{ include "quine-enterprise.basicAuth" . | nindent 10 }}
-          livenessProbe:
-            httpGet:
-              path: /api/v1/admin/liveness
-              port: 8080
-            initialDelaySeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /api/v1/admin/liveness
-              port: 8080
-            initialDelaySeconds: 5
+          {{ include "quine-enterprise.probes" . | nindent 10 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
