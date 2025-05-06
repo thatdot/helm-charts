@@ -207,6 +207,28 @@ Metrics Configuration Section
 {{- end }}
 
 {{/*
+Prometheus Metrics Reporter Configuration
+*/}}
+{{- define "quine-enterprise.prometheusJdkOptions" -}}
+{{- if .Values.metrics.prometheus.enabled }}
+-javaagent:jmx_prometheus_javaagent.jar=9090:/exporter.yaml
+{{- end }}
+{{- end }}
+
+
+{{/*
+Prometheus Service Port
+*/}}
+{{- define "quine-enterprise.prometheusServicePort" -}}
+{{- if .Values.metrics.prometheus.enabled }}
+- name: prometheus
+  protocol: TCP
+  port: 9090
+  targetPort: 9090
+{{- end }}
+{{- end }}
+
+{{/*
 Trial Configuration Section
 */}}
 {{- define "quine-enterprise.trialConfiguration" -}}
