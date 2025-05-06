@@ -11,10 +11,11 @@ spec:
       {{- include "quine-enterprise.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
+        {{- include "quine-enterprise.prometheusAnnotations" . | nindent 8 }}
       labels:
         {{- include "quine-enterprise.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}

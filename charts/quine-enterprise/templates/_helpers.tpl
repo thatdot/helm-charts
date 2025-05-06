@@ -229,6 +229,17 @@ Prometheus Service Port
 {{- end }}
 
 {{/*
+Prometheus Annotations
+*/}}
+{{- define "quine-enterprise.prometheusAnnotations" -}}
+{{- if .Values.metrics.prometheus.enabled -}}
+prometheus.io/scrape: "true"
+prometheus.io/port: "{{ .Values.metrics.prometheus.metricsReporterPort }}"
+prometheus.io/path: "/metrics"
+{{- end }}
+{{- end }}
+
+{{/*
 Trial Configuration Section
 */}}
 {{- define "quine-enterprise.trialConfiguration" -}}
