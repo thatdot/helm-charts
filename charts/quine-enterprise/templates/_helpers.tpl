@@ -126,6 +126,71 @@ Cassandra Auth Environment
 {{- end }}
 {{- end }}
 
+{{/*
+NGINX Basic Auth
+*/}}
+{{- define "quine-enterprise.basicAuth" -}}
+{{- if .Values.basicAuth.enabled }}
+- name: USE_NGINX
+  value: "true"
+- name: USE_BASIC_AUTH
+  value: "true"
+{{- end }}
+{{- end }}
+
+{{/*
+Basic Auth supporting volumes and volume mounts
+*/}}
+{{- define "quine-enterprise.basicAuthVolumes" }}
+{{- if .Values.basicAuth.enabled }}
+- name: credentials-volume
+  secret:
+    secretName: {{ include "quine-enterprise.fullname" . }}-credentials
+{{- end }}
+{{- end }}
+
+{{- define "quine-enterprise.basicAuthVolumeMounts" }}
+{{- if .Values.basicAuth.enabled }}
+- name: credentials-volume
+  readOnly: true
+  mountPath: /credentials
+{{- end }}
+{{- end }}
+
+{{/*
+Liveness and Readiness Probes
+*/}}
+{{- define "quine-enterprise.probes" -}}
+{{- if not .Values.basicAuth.enabled }}
+livenessProbe:
+  httpGet:
+    path: /api/v1/admin/liveness
+    port: 8080
+  initialDelaySeconds: 5
+readinessProbe:
+  httpGet:
+    path: /api/v1/admin/liveness
+    port: 8080
+  initialDelaySeconds: 5
+{{- else }}
+livenessProbe:
+  exec:
+    command:
+    - curl
+    - '--silent'
+    - '--fail'
+    - http://localhost:8081/api/v1/admin/liveness
+  initialDelaySeconds: 5
+readinessProbe:
+  exec:
+    command:
+    - curl
+    - '--silent'
+    - '--fail'
+    - http://localhost:8081/api/v1/admin/liveness
+  initialDelaySeconds: 5
+{{- end }}
+{{- end }}
 
 {{/*
 Metrics Configuration Section
