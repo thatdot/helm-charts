@@ -107,6 +107,8 @@ metrics:
     port: 8086
   prometheus:
     enabled: false
+    # Port opened up on Quine Enterprise port, exposing Prometheus Java Agent metrics
+    metricsReporterPort: 9090
 
 # Enable HTTP Basic Authentication for the embedded NGINX reverse‑proxy.
 #

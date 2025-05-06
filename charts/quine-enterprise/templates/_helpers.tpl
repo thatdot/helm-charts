@@ -211,7 +211,7 @@ Prometheus Metrics Reporter Configuration
 */}}
 {{- define "quine-enterprise.prometheusJdkOptions" -}}
 {{- if .Values.metrics.prometheus.enabled }}
--javaagent:jmx_prometheus_javaagent.jar=9090:/exporter.yaml
+-javaagent:jmx_prometheus_javaagent.jar={{ .Values.metrics.prometheus.metricsReporterPort }}:/exporter.yaml
 {{- end }}
 {{- end }}
 
@@ -223,7 +223,7 @@ Prometheus Service Port
 {{- if .Values.metrics.prometheus.enabled }}
 - name: prometheus
   protocol: TCP
-  port: 9090
+  port: {{ .Values.metrics.prometheus.metricsReporterPort }}
   targetPort: 9090
 {{- end }}
 {{- end }}
