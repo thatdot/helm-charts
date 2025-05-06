@@ -145,7 +145,7 @@ Basic Auth supporting volumes and volume mounts
 {{- if .Values.basicAuth.enabled }}
 - name: credentials-volume
   secret:
-    secretName: credentials
+    secretName: {{ include "quine-enterprise.fullname" . }}-credentials
 {{- end }}
 {{- end }}
 
