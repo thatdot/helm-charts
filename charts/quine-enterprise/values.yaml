@@ -108,7 +108,7 @@ metrics:
   prometheus:
     # Set to true to expose JMX metrics over HTTP on the `metricsReporterPort` using the Prometheus JMX agent
     enabled: false
-    # Port opened up on Quine Enterprise port, exposing Prometheus Java Agent metrics
+    # Port opened up on Quine Enterprise pod, exposing Prometheus Java Agent metrics
     metricsReporterPort: 9090
 
 # Enable HTTP Basic Authentication for the embedded NGINX reverse‑proxy.
