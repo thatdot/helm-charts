@@ -11,6 +11,5 @@ spec:
       targetPort: 8080
       protocol: TCP
       name: http
-    {{- include "quine-enterprise.prometheusServicePort" . | nindent 4 }}
   selector:
     {{- include "quine-enterprise.selectorLabels" . | nindent 4 }}
