@@ -141,7 +141,7 @@ ingress:
       pathType: Prefix
       servicePort: 80 
   tls:
-  - secretName: quine-enterprise-tls
+  - secretName: quine-enterprise-tls-secret
     hosts:
     - quine-enterprise.local
   certManager:

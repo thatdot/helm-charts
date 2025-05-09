@@ -10,9 +10,7 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
-  - hosts:
-    - quine-enterprise.local
-    secretName: {{ include "quine-enterprise.fullname" . }}-tls-secret
+    {{- toYaml .Values.ingress.tls | nindent 4 }}
   rules:
   - host: quine-enterprise.local
     http:
