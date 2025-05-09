@@ -4,8 +4,7 @@ kind: Ingress
 metadata:
   name: {{ include "quine-enterprise.fullname" . }}-ingress
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- include "quine-enterprise.ingressAnnotations" . | nindent 4 }}
   labels:
     {{- include "quine-enterprise.labels" . | nindent 4 }}
 spec:

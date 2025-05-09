@@ -131,6 +131,23 @@ basicAuth:
 ingress:
   enabled: false
   className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  hosts:
+  - host: quine-enterprise.local
+    paths:
+    - path: /
+      pathType: Prefix
+      servicePort: 80 
+  tls:
+  - secretName: quine-enterprise-tls
+    hosts:
+    - quine-enterprise.local
+  certManager:
+    enabled: false
+    clusterIssuer: letsencrypt-prod
+    issuerKind: ClusterIssuer
 
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
 image:
