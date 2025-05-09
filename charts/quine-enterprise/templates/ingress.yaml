@@ -12,14 +12,18 @@ spec:
   tls:
     {{- toYaml .Values.ingress.tls | nindent 4 }}
   rules:
-  - host: quine-enterprise.local
+  {{- range .Values.ingress.hosts }}
+  - host: {{ .host }}
     http:
       paths:
-      - pathType: Prefix
-        path: "/"
+      {{- range .paths }}
+      - path: {{ .path }}
+        pathType: {{ .pathType | default "Prefix" }}
         backend:
           service:
-            name: {{ include "quine-enterprise.fullname" . }}
-            port: 
-              number: {{ .Values.service.port }}
+            name: {{ include "quine-enterprise.fullname" $ }}
+            port:
+              number: {{ .servicePort }}
+      {{- end }}
+  {{- end }}
 {{- end }}
