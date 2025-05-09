@@ -5,12 +5,17 @@ metadata:
   name: {{ include "quine-enterprise.fullname" . }}-ingress
   annotations:
     {{- include "quine-enterprise.ingressAnnotations" . | nindent 4 }}
+    {{- if .Values.ingress.certManager.enabled }}
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- end }}
   labels:
     {{- include "quine-enterprise.labels" . | nindent 4 }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.tls }}
   tls:
     {{- toYaml .Values.ingress.tls | nindent 4 }}
+  {{- end }}
   rules:
   {{- range .Values.ingress.hosts }}
   - host: {{ .host }}
