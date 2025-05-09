@@ -128,6 +128,10 @@ basicAuth:
   enabled: false
   htpasswd: ""
 
+ingress:
+  enabled: false
+  className: nginx
+
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
 image:
   repository: public.ecr.aws/thatdot/streaming-graph-trial
