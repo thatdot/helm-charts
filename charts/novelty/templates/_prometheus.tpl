@@ -5,6 +5,11 @@ Prometheus Metrics Reporter Configuration
 {{- if .Values.metrics.prometheus.enabled }}
 -javaagent:jmx_prometheus_javaagent.jar={{ .Values.metrics.prometheus.port }}:/exporter.yaml
 {{- end }}
+{{- if .Values.metrics.csv.enabled }}
+-Dthatdot.novelty.metrics-reporters.0.type=csv
+-Dthatdot.novelty.metrics-reporters.0.period={{ .Values.metrics.csv.period }}
+-Dthatdot.novelty.metrics-reporters.0.log-directory={{ .Values.metrics.csv.log-directory }}
+{{- end }}
 {{- end }}
 
 {{/*
