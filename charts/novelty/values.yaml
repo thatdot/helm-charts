@@ -17,7 +17,7 @@ metrics:
   csv:
     enabled: false
     period: 200ms
-    log-directory: /metrics
+    logDirectory: /metrics
   prometheus:
     # Set to true to expose JMX metrics over HTTP using the Prometheus JMX agent
     enabled: false

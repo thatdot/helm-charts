@@ -8,7 +8,7 @@ Prometheus Metrics Reporter Configuration
 {{- if .Values.metrics.csv.enabled }}
 -Dthatdot.novelty.metrics-reporters.0.type=csv
 -Dthatdot.novelty.metrics-reporters.0.period={{ .Values.metrics.csv.period }}
--Dthatdot.novelty.metrics-reporters.0.log-directory={{ .Values.metrics.csv.log-directory }}
+-Dthatdot.novelty.metrics-reporters.0.log-directory={{ .Values.metrics.csv.logDirectory }}
 {{- end }}
 {{- end }}
 
