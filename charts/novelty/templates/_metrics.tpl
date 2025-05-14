@@ -1,7 +1,7 @@
 {{/*
 Prometheus Metrics Reporter Configuration
 */}}
-{{- define "novelty.prometheusJdkOptions" -}}
+{{- define "novelty.metricsJdkOptions" -}}
 {{- if .Values.metrics.prometheus.enabled }}
 -javaagent:jmx_prometheus_javaagent.jar={{ .Values.metrics.prometheus.port }}:/exporter.yaml
 {{- end }}

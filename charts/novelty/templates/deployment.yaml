@@ -23,7 +23,7 @@ spec:
           - name: JDK_JAVA_OPTIONS 
             value: |
               {{ include "novelty.trialConfiguration" . | nindent 14 }}
-              {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
+              {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
