@@ -11,6 +11,7 @@ spec:
       {{- include "novelty.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- include "novelty.prometheusAnnotations" . | nindent 6 }}
       labels:
         {{- include "novelty.labels" . | nindent 8 }}
     spec:
@@ -22,6 +23,7 @@ spec:
           - name: JDK_JAVA_OPTIONS 
             value: |
               {{ include "novelty.trialConfiguration" . | nindent 14 }}
+              {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}

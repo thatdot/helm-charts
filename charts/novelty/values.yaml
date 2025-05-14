@@ -12,11 +12,19 @@ trial:
   email: ""
   apiKey: ""
 
+# Metrics Configuration: 
+metrics:
+  prometheus:
+    # Set to true to expose JMX metrics over HTTP using the Prometheus JMX agent
+    enabled: false
+    # Port opened up on Quine Enterprise pod, exposing Prometheus Java Agent metrics
+    port: 9090
+
 image:
   repository: public.ecr.aws/thatdot/novelty-trial
   pullPolicy: IfNotPresent
   tag: ""
-  
+
 service:
   name: novelty
   type: ClusterIP
