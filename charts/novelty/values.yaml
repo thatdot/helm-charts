@@ -14,6 +14,14 @@ trial:
 
 # Metrics Configuration: 
 metrics:
+  influx:
+    enabled: false
+    period: 30s
+    database: metrics
+    scheme: http
+    # Set "host" and "port" to the reachable address of the influx server
+    host: ""
+    port: 8086
   csv:
     enabled: false
     period: 200ms

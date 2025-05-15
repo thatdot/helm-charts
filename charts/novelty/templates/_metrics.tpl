@@ -10,6 +10,14 @@ Prometheus Metrics Reporter Configuration
 -Dthatdot.novelty.metrics-reporters.0.period={{ .Values.metrics.csv.period }}
 -Dthatdot.novelty.metrics-reporters.0.log-directory={{ .Values.metrics.csv.logDirectory }}
 {{- end }}
+{{- if .Values.metrics.influx.enabled }}
+-Dthatdot.novelty.metrics-reporters.1.type=influxdb
+-Dthatdot.novelty.metrics-reporters.1.database={{ .Values.metrics.influx.database }}
+-Dthatdot.novelty.metrics-reporters.1.period={{ .Values.metrics.influx.period }}
+-Dthatdot.novelty.metrics-reporters.1.scheme={{ .Values.metrics.influx.scheme }}
+-Dthatdot.novelty.metrics-reporters.1.host={{ .Values.metrics.influx.host }}
+-Dthatdot.novelty.metrics-reporters.1.port={{ .Values.metrics.influx.port }}
+{{- end }}
 {{- end }}
 
 {{/*
