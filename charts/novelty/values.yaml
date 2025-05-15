@@ -14,6 +14,8 @@ trial:
 
 # Metrics Configuration: 
 metrics:
+  jmx:
+    enabled: false
   influx:
     enabled: false
     period: 30s
