@@ -11,7 +11,6 @@ spec:
       {{- include "novelty.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- include "novelty.prometheusAnnotations" . | nindent 6 }}
       labels:
         {{- include "novelty.labels" . | nindent 8 }}
     spec:

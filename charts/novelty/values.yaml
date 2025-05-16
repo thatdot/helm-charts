@@ -28,11 +28,6 @@ metrics:
     enabled: false
     period: 200ms
     logDirectory: /metrics
-  prometheus:
-    # Set to true to expose JMX metrics over HTTP using the Prometheus JMX agent
-    enabled: false
-    # Port opened up on Quine Enterprise pod, exposing Prometheus Java Agent metrics
-    port: 9090
 
 jmxRemote:
   enabled: false

@@ -2,9 +2,6 @@
 Prometheus Metrics Reporter Configuration
 */}}
 {{- define "novelty.metricsJdkOptions" -}}
-{{- if .Values.metrics.prometheus.enabled }}
--javaagent:jmx_prometheus_javaagent.jar={{ .Values.metrics.prometheus.port }}:/exporter.yaml
-{{- end }}
 {{- if .Values.metrics.csv.enabled }}
 -Dthatdot.novelty.metrics-reporters.0.type=csv
 -Dthatdot.novelty.metrics-reporters.0.period={{ .Values.metrics.csv.period }}
@@ -35,17 +32,5 @@ JMX Remote Settings
 -Dcom.sun.management.jmxremote.authenticate={{ .Values.jmxRemote.authenticate }}
 -Dcom.sun.management.jmxremote.ssl={{ .Values.jmxRemote.ssl }}
 -Djava.rmi.server.hostname={{ .Values.jmxRemote.rmiHostname }}
-{{- end }}
-{{- end }}
-
-{{/*
-Prometheus Annotations
-*/}}
-{{- define "novelty.prometheusAnnotations" -}}
-{{- if .Values.metrics.prometheus.enabled -}}
-annotations:
-  prometheus.io/scrape: "true"
-  prometheus.io/port: "{{ .Values.metrics.prometheus.port }}"
-  prometheus.io/path: "/metrics"
 {{- end }}
 {{- end }}
