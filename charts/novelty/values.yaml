@@ -29,6 +29,11 @@ metrics:
     period: 200ms
     logDirectory: /metrics
 
+# Java Management Extensions (JMX) and Remote Method Invocation (RMI) configuration
+#
+# These values configure JMX RMI. See the official docs in the following link
+# https://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html
+#
 jmxRemote:
   enabled: false
   port: 9010
