@@ -24,6 +24,21 @@ Prometheus Metrics Reporter Configuration
 {{- end }}
 
 {{/*
+JMX Remote Settings
+*/}}
+{{- define "novelty.jmxJdkOptions" -}}
+{{- if .Values.jmxRemote.enabled }}
+-Dcom.sun.management.jmxremote
+-Dcom.sun.management.jmxremote.port={{ .Values.jmxRemote.port }}
+-Dcom.sun.management.jmxremote.rmi.port={{ .Values.jmxRemote.rmiPort }}
+-Dcom.sun.management.jmxremote.local.only={{ .Values.jmxRemote.localOnly }}
+-Dcom.sun.management.jmxremote.authenticate={{ .Values.jmxRemote.authenticate }}
+-Dcom.sun.management.jmxremote.ssl={{ .Values.jmxRemote.ssl }}
+-Djava.rmi.server.hostname={{ .Values.jmxRemote.rmiHostname }}
+{{- end }}
+{{- end }}
+
+{{/*
 Prometheus Annotations
 */}}
 {{- define "novelty.prometheusAnnotations" -}}

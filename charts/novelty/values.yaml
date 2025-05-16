@@ -34,6 +34,15 @@ metrics:
     # Port opened up on Quine Enterprise pod, exposing Prometheus Java Agent metrics
     port: 9090
 
+jmxRemote:
+  enabled: false
+  port: 9010
+  rmiPort: 9010
+  localOnly: false
+  authenticate: false
+  ssl: false
+  rmiHostname: localhost
+
 image:
   repository: public.ecr.aws/thatdot/novelty-trial
   pullPolicy: IfNotPresent
