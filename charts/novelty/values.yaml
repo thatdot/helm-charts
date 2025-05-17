@@ -12,11 +12,42 @@ trial:
   email: ""
   apiKey: ""
 
+# Metrics Configuration: 
+metrics:
+  jmx:
+    enabled: false
+  influx:
+    enabled: false
+    period: 30s
+    database: metrics
+    scheme: http
+    # Set "host" and "port" to the reachable address of the influx server
+    host: ""
+    port: 8086
+  csv:
+    enabled: false
+    period: 200ms
+    logDirectory: /metrics
+
+# Java Management Extensions (JMX) and Remote Method Invocation (RMI) configuration
+#
+# These values configure JMX RMI. See the official docs in the following link
+# https://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html
+#
+jmxRemote:
+  enabled: false
+  port: 9010
+  rmiPort: 9010
+  localOnly: false
+  authenticate: false
+  ssl: false
+  rmiHostname: localhost
+
 image:
   repository: public.ecr.aws/thatdot/novelty-trial
   pullPolicy: IfNotPresent
   tag: ""
-  
+
 service:
   name: novelty
   type: ClusterIP
