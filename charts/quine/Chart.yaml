@@ -1,0 +1,8 @@
+apiVersion: v2
+name: quine
+description: A Helm chart for creating a thatDot Quine instance
+type: application
+
+version: 0.4.7
+
+appVersion: "1.9.1"

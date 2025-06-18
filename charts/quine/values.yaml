@@ -1,0 +1,157 @@
+# Default values for quine.
+
+# Grace period for shutdown in seconds
+memberTerminationGracePeriod: 30
+
+# Cluster-wide log level
+thatdot:
+  # Possible values: ERROR, WARN, INFO, DEBUG
+  logLevel: WARN
+
+# Cassandra Persistor Settings: Set enabled to true in order to configure the
+# cassandra persistor. 
+# NOTE: For now the cassandra persistor is the only external persistor
+# supported by this helm chart. If enabled is set to false, an internal RocksDB
+# persistor will be used. Such a configuration can be used for debug and
+# development purposes, but is not recommended for production.
+cassandra:
+  enabled: false
+
+  plaintextAuth:
+    # Enable this section use basic auth with cassandra
+    enabled: false
+    username: "cassandra"
+    passwordExistingSecret: {}
+      # # Set passwordExisting secret to use configuration from a kubernetes secret
+      # # overrides cassandra.plaintextAuth.password
+      # # Ex:
+      # name: "my-secret"
+      # key: "my-secret-key"
+    password: "cassandra"
+
+  # Configured endpoints a comma-separated list of cassandra cluster URLs
+  endpoints: ""
+
+  # Configure the default keyspace name
+  keyspace: quine
+
+  # Set these two values to true for Quine to create its own keyspace and tables
+  # If false, keyspace and tables must be existing before this chart is installed.
+  shouldCreateKeyspace: true
+  shouldCreateTables: true
+
+  # How many copies of each datum the Cassandra cluster should retain
+  replicationFactor: 1
+
+  # How many hosts must agree on a datum for Quine to consider that
+  # datum written/read
+  readConsistency: LOCAL_QUORUM
+  writeConsistency: LOCAL_QUORUM
+
+  # Passed through to Cassandra
+  localDatacenter: datacenter1
+
+  # How long to wait before considering a write operation failed
+  writeTimeout: 10s
+
+  # How long to wait before considering a read operation failed
+  readTimeout: 10s
+
+persistence: 
+  # whether to save node journals. "true" uses more disk space and
+  # enables more functionality, such as historical queries
+  journalEnabled: true
+
+  # one of [on-node-sleep, on-node-update, never]. When to save a
+  # snapshot of a node's current state, including any DistinctId Standing
+  # Queries registered on the node
+  snapshotSchedule: on-node-sleep
+
+  # whether only a single snapshot should be retained per-node. If
+  # false, one snapshot will be saved at each timestamp against which
+  # a historical query is made
+  snapshotSingleton: false
+
+  # when to save Standing Query partial result (only applies for the
+  # `MultipleValues` mode -- `DistinctId` Standing Queries always save
+  # when a node saves a snapshot, regardless of this setting)
+  standingQuerySchedule: on-node-sleep
+
+  # whether effects in-memory occur before or after updates are confirmed
+  # persisted to disk.
+  # Possible values: memory-first, persistor-first
+  effectOrder: persistor-first
+
+# Metrics Configuration: 
+metrics:
+  influx:
+    # Set enabled to true in order to send metrics to an existing influx v1 server.
+    enabled: false
+    period: 30s
+    database: metrics
+    scheme: http
+    # Set "host" and "port" to the reachable address of the influx server
+    host: ""
+    port: 8086
+  prometheus:
+    # Set to true to expose JMX metrics over HTTP using the Prometheus JMX agent
+    enabled: false
+    # Port opened up on Quine pod, exposing Prometheus Java Agent metrics
+    port: 9090
+
+# Override image repository and tag to change the docker image used to run Quine
+image:
+  repository: thatdot/quine
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+  # # Uncomment these values to customize the resource requests and limits use
+  # # for the thatDot Quine pod.
+  # # NOTE: It is recommended to avoid using cpu limits entirely or, if necessary, 
+  # # only to use cpu limits which are at least double the cpu requests.
+  # limits:
+  #   cpu: 2
+  #   memory: 7Gi
+  # requests:
+  #   cpu: 4
+  #   memory: 7Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Use these values to attach mount volumes to the Quine container for each pod
+volumes: []
+volumeMounts: []
+
+# Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
+extraJdkArgs: ""
+
+# Uncomment to override service account
+# serviceAccountName: ""
