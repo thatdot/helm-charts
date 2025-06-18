@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "quine.fullname" . }}
+  labels:
+    {{- include "quine.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "quine.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- include "quine.prometheusAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "quine.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.memberTerminationGracePeriod }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: CASSANDRA_ENDPOINTS
+            value: {{ .Values.cassandra.endpoints }}
+          - name: JDK_JAVA_OPTIONS 
+            value: |
+              -Dconfig.override_with_env_vars=true
+              -Dthatdot.loglevel={{ .Values.thatdot.logLevel }} 
+              -Dpekko.coordinated-shutdown.phases.before-cluster-shutdown.timeout="{{ sub .Values.memberTerminationGracePeriod 5 }} seconds"
+              -Dquine.id.type=uuid
+              -Dquine.id.partitioned=true
+              {{ include "quine.persistenceConfiguration" . | nindent 14 }}
+              {{ include "quine.storeConfiguration" . | nindent 14 }}
+              {{ include "quine.metricsConfiguration" . | nindent 14 }}
+              {{ include "quine.prometheusJdkOptions" . | nindent 14 }}
+              {{ .Values.extraJdkArgs }}
+          {{ include "quine.cassandraAuthEnv" . | nindent 10 }}
+          {{ include "quine.probes" . | nindent 10 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      volumes:
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
