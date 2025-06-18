@@ -55,6 +55,17 @@ entries:
     urls:
     - https://github.com/thatdot/helm-charts/releases/download/novelty-0.2.0/novelty-0.2.0.tgz
     version: 0.2.0
+  quine:
+  - apiVersion: v2
+    appVersion: 1.9.1
+    created: "2025-06-18T17:07:16.671000451Z"
+    description: A Helm chart for creating a thatDot Quine instance
+    digest: 1548b9d3d76d86d24502981c525c19663e38b63917cb885f7ceea95a73caa2f7
+    name: quine
+    type: application
+    urls:
+    - https://github.com/thatdot/helm-charts/releases/download/quine-0.4.7/quine-0.4.7.tgz
+    version: 0.4.7
   quine-enterprise:
   - apiVersion: v2
     appVersion: 1.9.1
@@ -166,4 +177,4 @@ entries:
     urls:
     - https://github.com/thatdot/helm-charts/releases/download/quine-enterprise-0.2.0/quine-enterprise-0.2.0.tgz
     version: 0.2.0
-generated: "2025-05-16T18:28:42.663756516Z"
+generated: "2025-06-18T17:07:16.671054142Z"
