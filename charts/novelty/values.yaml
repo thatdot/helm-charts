@@ -12,7 +12,7 @@ trial:
   email: ""
   apiKey: ""
 
-# Metrics Configuration: 
+# Metrics Configuration:
 metrics:
   jmx:
     enabled: false
@@ -28,6 +28,11 @@ metrics:
     enabled: false
     period: 200ms
     logDirectory: /metrics
+  prometheus:
+    # Set to true to expose JMX metrics over HTTP using the Prometheus JMX agent
+    enabled: false
+    # Port opened up on Quine Enterprise pod, exposing Prometheus Java Agent metrics
+    port: 9090
 
 # Java Management Extensions (JMX) and Remote Method Invocation (RMI) configuration
 #
@@ -61,6 +66,6 @@ resources:
   requests:
     cpu: 1024m
     memory: 2048Mi
-    
+
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""

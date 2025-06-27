@@ -11,6 +11,11 @@ spec:
       {{- include "novelty.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- include "novelty.prometheusAnnotations" . | nindent 8 }}
       labels:
         {{- include "novelty.labels" . | nindent 8 }}
     spec:
@@ -24,6 +29,7 @@ spec:
               {{ include "novelty.trialConfiguration" . | nindent 14 }}
               {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
+              {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
