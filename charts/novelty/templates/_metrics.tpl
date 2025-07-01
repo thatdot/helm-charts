@@ -15,7 +15,7 @@ Prometheus Metrics Reporter Configuration
 -Dthatdot.novelty.metrics-reporters.1.host={{ .Values.metrics.influx.host }}
 -Dthatdot.novelty.metrics-reporters.1.port={{ .Values.metrics.influx.port }}
 {{- end }}
-{{- if .Values.metrics.jmx.enabled }}
+{{- if or .Values.metrics.jmx.enabled .Values.metrics.prometheus.enabled }}
 -Dthatdot.novelty.metrics-reporters.2.type=jmx
 {{- end }}
 {{- end }}
