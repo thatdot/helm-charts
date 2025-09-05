@@ -6,6 +6,8 @@ metadata:
     {{- include "quine.labels" . | nindent 4 }}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "quine.selectorLabels" . | nindent 6 }}
