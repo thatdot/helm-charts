@@ -67,6 +67,16 @@ entries:
   quine:
   - apiVersion: v2
     appVersion: 1.9.1
+    created: "2025-09-08T01:37:02.17397458Z"
+    description: A Helm chart for creating a thatDot Quine instance
+    digest: f32273a40b76501980854b1aaebbecebc00e23562106900bca0f73d14b80cee7
+    name: quine
+    type: application
+    urls:
+    - https://github.com/thatdot/helm-charts/releases/download/quine-0.4.8/quine-0.4.8.tgz
+    version: 0.4.8
+  - apiVersion: v2
+    appVersion: 1.9.1
     created: "2025-06-18T17:07:16.671000451Z"
     description: A Helm chart for creating a thatDot Quine instance
     digest: 1548b9d3d76d86d24502981c525c19663e38b63917cb885f7ceea95a73caa2f7
@@ -76,6 +86,16 @@ entries:
     - https://github.com/thatdot/helm-charts/releases/download/quine-0.4.7/quine-0.4.7.tgz
     version: 0.4.7
   quine-enterprise:
+  - apiVersion: v2
+    appVersion: 1.9.1
+    created: "2025-09-08T01:37:02.413588493Z"
+    description: A Helm chart for creating a thatDot Quine Enterprise cluster
+    digest: 3a3f14984bb73da81c921a19813e0b3bdc1e89ae171ee66d3fdd692834b6f46f
+    name: quine-enterprise
+    type: application
+    urls:
+    - https://github.com/thatdot/helm-charts/releases/download/quine-enterprise-0.4.8/quine-enterprise-0.4.8.tgz
+    version: 0.4.8
   - apiVersion: v2
     appVersion: 1.9.1
     created: "2025-05-08T16:06:17.765207152Z"
@@ -186,4 +206,4 @@ entries:
     urls:
     - https://github.com/thatdot/helm-charts/releases/download/quine-enterprise-0.2.0/quine-enterprise-0.2.0.tgz
     version: 0.2.0
-generated: "2025-07-01T21:10:54.40440259Z"
+generated: "2025-09-08T01:37:02.413646652Z"
