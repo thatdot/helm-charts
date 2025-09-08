@@ -3,6 +3,6 @@ name: quine-enterprise
 description: A Helm chart for creating a thatDot Quine Enterprise cluster
 type: application
 
-version: 0.4.7
+version: 0.4.8
 
 appVersion: "1.9.1"

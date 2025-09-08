@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       {{- include "quine-enterprise.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: {{- include "quine-enterprise.strategy" . }}
   template:
     metadata:
       annotations:

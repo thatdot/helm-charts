@@ -65,10 +65,22 @@ Create the name of the service account to use
 Cluster Join Type
 */}}
 {{- define "quine-enterprise.clusterJoinTypeConfiguration" -}}
-{{ if gt (int .Values.hostCount) 1 }}
+{{- if gt (int .Values.hostCount) 1 }}
 -Dquine.cluster.cluster-join.type=dns-entry 
 {{- end }}
 {{- end }}
+
+{{/* 
+Update Strategy
+NOTE: A cluster can use a rolling update, but two different single hosts should
+not share the persistor.
+*/}}
+{{- define "quine-enterprise.strategy" -}}
+{{ if gt (int .Values.hostCount) 1 }} RollingUpdate
+{{- else }} Recreate
+{{- end}}
+{{- end }}
+
 
 {{/*
 Persistence Config Section
