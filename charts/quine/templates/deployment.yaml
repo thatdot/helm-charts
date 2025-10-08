@@ -46,8 +46,6 @@ spec:
               -Dconfig.override_with_env_vars=true
               -Dthatdot.loglevel={{ .Values.thatdot.logLevel }} 
               -Dpekko.coordinated-shutdown.phases.before-cluster-shutdown.timeout="{{ sub .Values.memberTerminationGracePeriod 5 }} seconds"
-              -Dquine.id.type=uuid
-              -Dquine.id.partitioned=true
               {{ include "quine.persistenceConfiguration" . | nindent 14 }}
               {{ include "quine.storeConfiguration" . | nindent 14 }}
               {{ include "quine.metricsConfiguration" . | nindent 14 }}

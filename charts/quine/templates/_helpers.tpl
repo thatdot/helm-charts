@@ -126,11 +126,13 @@ livenessProbe:
     path: /api/v1/admin/liveness
     port: 8080
   initialDelaySeconds: 5
+  timeoutSeconds: 10
 readinessProbe:
   httpGet:
     path: /api/v1/admin/liveness
     port: 8080
   initialDelaySeconds: 5
+  timeoutSeconds: 10
 {{- end }}
 
 {{/*
