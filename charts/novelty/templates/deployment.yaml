@@ -24,9 +24,9 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          - name: JDK_JAVA_OPTIONS 
+          - name: JDK_JAVA_OPTIONS
             value: |
-              {{ include "novelty.trialConfiguration" . | nindent 14 }}
+              {{ include "novelty.licenseConfiguration" . | nindent 14 }}
               {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
               {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}

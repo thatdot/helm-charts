@@ -7,10 +7,8 @@ fullnameOverride: ""
 
 replicaCount: 1
 
-trial:
-  enabled: true
-  email: ""
-  apiKey: ""
+# License key required for Novelty
+licenseKey: ""
 
 # Metrics Configuration:
 metrics:
@@ -48,10 +46,14 @@ jmxRemote:
   ssl: false
   rmiHostname: localhost
 
+# The registry URL and credentials are provided by thatDot with your license key
 image:
-  repository: public.ecr.aws/thatdot/novelty-trial
+  repository: ""
   pullPolicy: IfNotPresent
   tag: ""
+
+# Registry credentials provided by thatDot
+imagePullSecrets: []
 
 service:
   name: novelty

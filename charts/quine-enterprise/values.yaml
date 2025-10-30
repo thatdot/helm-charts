@@ -14,11 +14,8 @@ thatdot:
   # Possible values: ERROR, WARN, INFO, DEBUG
   logLevel: WARN
 
-# Trial authorization fields. 
-trial:
-  enabled: true
-  email: ""
-  apiKey: ""
+# License key required for Quine Enterprise
+licenseKey: ""
 
 # Cassandra Persistor Settings:
 # Set enabled to true in order to configure the cassandra persistor.
@@ -129,12 +126,14 @@ basicAuth:
   htpasswd: ""
 
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
+# The registry URL and credentials are provided by thatDot with your license key
 image:
-  repository: public.ecr.aws/thatdot/streaming-graph-trial
+  repository: ""
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+# Registry credentials provided by thatDot (e.g., [{"name": "thatdot-registry"}])
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

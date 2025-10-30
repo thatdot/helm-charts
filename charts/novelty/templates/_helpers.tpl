@@ -51,11 +51,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Trial Configuration Section
+License Configuration Section
 */}}
-{{- define "novelty.trialConfiguration" -}}
-{{- if .Values.trial.enabled }}
--Dthatdot.novelty.trial.email={{ required "If trial version is enabled, Values.trial.email must be set" .Values.trial.email }}
--Dthatdot.novelty.trial.api-key={{ required "If trial version is enabled, Values.trial.apiKey must be set" .Values.trial.apiKey }}
+{{- define "novelty.licenseConfiguration" -}}
+{{- if .Values.licenseKey }}
+-Dthatdot.novelty.license-key={{ .Values.licenseKey }}
+{{- else }}
+{{- fail "licenseKey is required. Please provide a valid license key from thatDot." }}
 {{- end }}
 {{- end }}

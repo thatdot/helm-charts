@@ -55,7 +55,7 @@ spec:
               {{ include "quine-enterprise.persistenceConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.storeConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.metricsConfiguration" . | nindent 14 }}
-              {{ include "quine-enterprise.trialConfiguration" . | nindent 14 }}
+              {{ include "quine-enterprise.licenseConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
           {{ include "quine-enterprise.cassandraAuthEnv" . | nindent 10 }}

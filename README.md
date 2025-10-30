@@ -26,9 +26,8 @@ thatdot` to see the charts.
 
 The Quine Enterprise Helm chart can be used to deploy and manage a thatDot
 [Quine Enterprise](https://docs.thatdot.com/streaming-graph/index.html) cluster
-on Kubernetes.  This Helm chart works for both the trial version with a trial
-license and the full licensed version. Free trial licenses are available at
-[thatdot.com](https://www.thatdot.com/free-trial/).
+on Kubernetes. Quine Enterprise requires a valid license key provided by thatDot
+as part of an evaluation agreement or purchase order.
 
 ### Novelty
 
@@ -36,9 +35,8 @@ license and the full licensed version. Free trial licenses are available at
 
 The Novelty Helm chart can be used to deploy and manage thatDot
 [Novelty](https://docs.thatdot.com/novelty/getting-started/novelty-main-concepts.html)
-on Kubernetes.  This Helm chart works for both the trial version with a trial
-license and the full licensed version. Free trial licenses are available at
-[thatdot.com](https://www.thatdot.com/free-trial/).
+on Kubernetes. Novelty requires a valid license key provided by thatDot
+as part of an evaluation agreement or purchase order.
 
 ## Extras
 

@@ -10,13 +10,17 @@ Grafana.
 
 ### Prerequisites
 
-* Sign up for Novelty and Quine Enterprise Trial at
-  [thatdot.com](https://www.thatdot.com/free-trial/)
-  * Add email address and API key for Quine Enterprise (also called thatDot
-    Streaming Graph) to quine-enterprise-values.yaml
-  * Add email address and API key for Novelty to novelty-values.yaml
-  * **NOTE:** You will receive the API key via email. A separate key must be
-    used for each unique product.
+* Obtain license keys for Novelty and Quine Enterprise from thatDot
+  * License keys are provided as part of an evaluation agreement or purchase order
+  * To schedule a demo or purchase a license:
+    * Request a demo: [https://www.thatdot.com/request-a-demo/](https://www.thatdot.com/request-a-demo/)
+    * Email sales: [sales@thatdot.com](mailto:sales@thatdot.com)
+    * Contact thatDot: [https://www.thatdot.com/contact-us/](https://www.thatdot.com/contact-us/)
+  * When you receive your license keys, thatDot will also provide:
+    * The private Docker registry URL
+    * Registry credentials
+  * Add license key for Quine Enterprise to quine-enterprise-values.yaml
+  * Add license key for Novelty to novelty-values.yaml
 * Kubernetes cluster (EKS recommended)
   * Clusterrole with permissions to create a new namespace and resources under it.
   * kubectl

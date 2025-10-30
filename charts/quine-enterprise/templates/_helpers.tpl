@@ -221,11 +221,12 @@ Metrics Configuration Section
 {{- end }}
 
 {{/*
-Trial Configuration Section
+License Configuration Section
 */}}
-{{- define "quine-enterprise.trialConfiguration" -}}
-{{- if .Values.trial.enabled }}
--Dquine.trial.email={{ required "If trial version is enabled, Values.trial.email must be set" .Values.trial.email }}
--Dquine.trial.api-key={{ required "If trial version is enabled, Values.trial.apiKey must be set" .Values.trial.apiKey }}
+{{- define "quine-enterprise.licenseConfiguration" -}}
+{{- if .Values.licenseKey }}
+-Dquine.license-key={{ .Values.licenseKey }}
+{{- else }}
+{{- fail "licenseKey is required. Please provide a valid license key from thatDot." }}
 {{- end }}
 {{- end }}
