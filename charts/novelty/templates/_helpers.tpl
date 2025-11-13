@@ -78,11 +78,11 @@ OIDC Configuration Section
 {{- if .Values.oidc.provider.loginPath }}
 -Dthatdot.novelty.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
 {{- end }}
-{{- if .Values.oidc.client.id }}
--Dthatdot.novelty.auth.oidc.full.client.id="{{ .Values.oidc.client.id }}"
-{{- end }}
-{{- if .Values.oidc.client.secret }}
--Dthatdot.novelty.auth.oidc.full.client.secret="{{ .Values.oidc.client.secret }}"
+{{- if .Values.oidc.client.existingSecret.name }}
+-Dthatdot.novelty.auth.oidc.full.client.id="${OIDC_CLIENT_ID}"
+-Dthatdot.novelty.auth.oidc.full.client.secret="${OIDC_CLIENT_SECRET}"
+{{- else }}
+{{- fail "oidc.client.existingSecret.name is required when oidc.enabled is true" }}
 {{- end }}
 {{- if .Values.oidc.session.autoGenerate }}
 -Dthatdot.novelty.auth.session.secret="{{ include "novelty.generateSessionSecret" . }}"

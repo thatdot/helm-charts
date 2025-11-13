@@ -39,6 +39,18 @@ spec:
                 name: {{ .Values.oidc.session.existingSecret.name }}
                 key: {{ .Values.oidc.session.existingSecret.key }}
           {{- end }}
+          {{- if and .Values.oidc.enabled .Values.oidc.client.existingSecret.name }}
+          - name: OIDC_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.client.existingSecret.name }}
+                key: {{ .Values.oidc.client.existingSecret.secretKeys.clientIdKey }}
+          - name: OIDC_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.client.existingSecret.name }}
+                key: {{ .Values.oidc.client.existingSecret.secretKeys.clientSecretKey }}
+          {{- end }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
           livenessProbe:

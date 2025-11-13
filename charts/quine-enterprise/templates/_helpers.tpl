@@ -248,11 +248,11 @@ OIDC Configuration Section
 {{- if .Values.oidc.provider.loginPath }}
 -Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
 {{- end }}
-{{- if .Values.oidc.client.id }}
--Dquine.auth.oidc.full.client.id="{{ .Values.oidc.client.id }}"
-{{- end }}
-{{- if .Values.oidc.client.secret }}
--Dquine.auth.oidc.full.client.secret="{{ .Values.oidc.client.secret }}"
+{{- if .Values.oidc.client.existingSecret.name }}
+-Dquine.auth.oidc.full.client.id="${OIDC_CLIENT_ID}"
+-Dquine.auth.oidc.full.client.secret="${OIDC_CLIENT_SECRET}"
+{{- else }}
+{{- fail "oidc.client.existingSecret.name is required when oidc.enabled is true" }}
 {{- end }}
 {{- if .Values.oidc.session.autoGenerate }}
 -Dquine.auth.session.secret="{{ include "quine-enterprise.generateSessionSecret" . }}"

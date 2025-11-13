@@ -78,8 +78,11 @@ oidc:
     tokenUrl: ""
     loginPath: "auth"
   client:
-    id: ""
-    secret: ""
+    existingSecret:
+      name: ""
+      secretKeys:
+        clientIdKey: "client-id"
+        clientSecretKey: "client-secret"
   session:
     autoGenerate: true
     existingSecret:
