@@ -186,21 +186,33 @@ OIDC Configuration Section
 */}}
 {{- define "quine-enterprise.oidcConfiguration" -}}
 {{- if .Values.oidc.enabled }}
-{{- if .Values.oidc.provider.locationUrl }}
--Dquine.auth.oidc.full.provider.location-url="{{ .Values.oidc.provider.locationUrl }}"
+{{- if not .Values.oidc.provider.locationUrl }}
+{{- fail "oidc.provider.locationUrl is required when oidc.enabled is true" }}
 {{- end }}
-{{- if .Values.oidc.provider.authorizationUrl }}
--Dquine.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
+{{- if not .Values.oidc.provider.authorizationUrl }}
+{{- fail "oidc.provider.authorizationUrl is required when oidc.enabled is true" }}
 {{- end }}
-{{- if .Values.oidc.provider.tokenUrl }}
--Dquine.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
+{{- if not .Values.oidc.provider.tokenUrl }}
+{{- fail "oidc.provider.tokenUrl is required when oidc.enabled is true" }}
 {{- end }}
-{{- if .Values.oidc.provider.loginPath }}
--Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
+{{- if not .Values.oidc.provider.loginPath }}
+{{- fail "oidc.provider.loginPath is required when oidc.enabled is true" }}
 {{- end }}
 {{- if not .Values.oidc.client.existingSecret.name }}
 {{- fail "oidc.client.existingSecret.name is required when oidc.enabled is true" }}
 {{- end }}
+{{- if not .Values.oidc.session.autoGenerate }}
+{{- if not .Values.oidc.session.existingSecret.name }}
+{{- fail "oidc.session.existingSecret.name is required when oidc.enabled is true and autoGenerate is false" }}
+{{- end }}
+{{- if not .Values.oidc.session.existingSecret.key }}
+{{- fail "oidc.session.existingSecret.key is required when oidc.enabled is true and autoGenerate is false" }}
+{{- end }}
+{{- end }}
+-Dquine.auth.oidc.full.provider.location-url="{{ .Values.oidc.provider.locationUrl }}"
+-Dquine.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
+-Dquine.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
+-Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
 -Dquine.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
 -Dquine.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
 {{- end }}
