@@ -48,7 +48,7 @@ spec:
           {{- if .Values.oidc.enabled }}
           {{- if .Values.oidc.session.autoGenerate }}
           - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
-            value: "{{ randAlphaNum 32 }}"
+            value: "{{ randAlphaNum 45 }}"
           {{- else if .Values.oidc.session.existingSecret.name }}
           - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
             valueFrom:
