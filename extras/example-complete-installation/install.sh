@@ -36,6 +36,7 @@ helm repo add thatdot https://helm.thatdot.com
 # Novelty Helm chart
 helm upgrade \
     --install \
+    --version 0.4.4 \
     --namespace "$kube_namespace" \
     novelty \
     thatdot/novelty \
@@ -63,6 +64,7 @@ helm upgrade \
 # Quine Enterprise Helm chart
 helm upgrade \
     --install \
+    --version 0.4.9 \
     --namespace "$kube_namespace" \
     quine-enterprise \
     thatdot/quine-enterprise \
