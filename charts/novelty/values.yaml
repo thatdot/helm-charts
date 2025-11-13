@@ -90,7 +90,7 @@ oidc:
       key: ""
     secret: ""
     expirationSeconds: 3600
-    secureCookies: false
+    secureCookies: true
 
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""

@@ -146,7 +146,7 @@ oidc:
       key: ""
     secret: ""
     expirationSeconds: 3600
-    secureCookies: false
+    secureCookies: true
 
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
 # The registry URL and credentials are provided by thatDot with your license key
