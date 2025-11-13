@@ -60,3 +60,34 @@ License Configuration Section
 {{- fail "licenseKey is required. Please provide a valid license key from thatDot." }}
 {{- end }}
 {{- end }}
+
+{{/*
+OIDC Configuration Section
+*/}}
+{{- define "novelty.oidcConfiguration" -}}
+{{- if .Values.oidc.enabled }}
+{{- if .Values.oidc.provider.locationUrl }}
+-Dthatdot.novelty.auth.oidc.full.provider.location-url="{{ .Values.oidc.provider.locationUrl }}"
+{{- end }}
+{{- if .Values.oidc.provider.authorizationUrl }}
+-Dthatdot.novelty.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
+{{- end }}
+{{- if .Values.oidc.provider.tokenUrl }}
+-Dthatdot.novelty.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
+{{- end }}
+{{- if .Values.oidc.provider.loginPath }}
+-Dthatdot.novelty.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
+{{- end }}
+{{- if .Values.oidc.client.id }}
+-Dthatdot.novelty.auth.oidc.full.client.id="{{ .Values.oidc.client.id }}"
+{{- end }}
+{{- if .Values.oidc.client.secret }}
+-Dthatdot.novelty.auth.oidc.full.client.secret="{{ .Values.oidc.client.secret }}"
+{{- end }}
+{{- if .Values.oidc.session.secret }}
+-Dthatdot.novelty.auth.session.secret="{{ .Values.oidc.session.secret }}"
+{{- end }}
+-Dthatdot.novelty.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
+-Dthatdot.novelty.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
+{{- end }}
+{{- end }}

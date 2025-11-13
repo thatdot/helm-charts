@@ -230,3 +230,34 @@ License Configuration Section
 {{- fail "licenseKey is required. Please provide a valid license key from thatDot." }}
 {{- end }}
 {{- end }}
+
+{{/*
+OIDC Configuration Section
+*/}}
+{{- define "quine-enterprise.oidcConfiguration" -}}
+{{- if .Values.oidc.enabled }}
+{{- if .Values.oidc.provider.locationUrl }}
+-Dquine.auth.oidc.full.provider.location-url="{{ .Values.oidc.provider.locationUrl }}"
+{{- end }}
+{{- if .Values.oidc.provider.authorizationUrl }}
+-Dquine.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
+{{- end }}
+{{- if .Values.oidc.provider.tokenUrl }}
+-Dquine.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
+{{- end }}
+{{- if .Values.oidc.provider.loginPath }}
+-Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
+{{- end }}
+{{- if .Values.oidc.client.id }}
+-Dquine.auth.oidc.full.client.id="{{ .Values.oidc.client.id }}"
+{{- end }}
+{{- if .Values.oidc.client.secret }}
+-Dquine.auth.oidc.full.client.secret="{{ .Values.oidc.client.secret }}"
+{{- end }}
+{{- if .Values.oidc.session.secret }}
+-Dquine.auth.session.secret="{{ .Values.oidc.session.secret }}"
+{{- end }}
+-Dquine.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
+-Dquine.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
+{{- end }}
+{{- end }}

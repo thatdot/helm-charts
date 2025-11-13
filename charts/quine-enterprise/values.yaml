@@ -125,6 +125,22 @@ basicAuth:
   enabled: false
   htpasswd: ""
 
+# OIDC Configuration for OpenID Connect authentication
+oidc:
+  enabled: false
+  provider:
+    locationUrl: ""
+    authorizationUrl: ""
+    tokenUrl: ""
+    loginPath: "auth"
+  client:
+    id: ""
+    secret: ""
+  session:
+    secret: ""
+    expirationSeconds: 3600
+    secureCookies: false
+
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
 # The registry URL and credentials are provided by thatDot with your license key
 image:

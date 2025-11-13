@@ -69,5 +69,21 @@ resources:
     cpu: 1024m
     memory: 2048Mi
 
+# OIDC Configuration for OpenID Connect authentication
+oidc:
+  enabled: false
+  provider:
+    locationUrl: ""
+    authorizationUrl: ""
+    tokenUrl: ""
+    loginPath: "auth"
+  client:
+    id: ""
+    secret: ""
+  session:
+    secret: ""
+    expirationSeconds: 3600
+    secureCookies: false
+
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""

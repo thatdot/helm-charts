@@ -27,6 +27,7 @@ spec:
           - name: JDK_JAVA_OPTIONS
             value: |
               {{ include "novelty.licenseConfiguration" . | nindent 14 }}
+              {{ include "novelty.oidcConfiguration" . | nindent 14 }}
               {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
               {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
