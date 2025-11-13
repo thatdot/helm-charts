@@ -79,7 +79,7 @@ oidc:
     loginPath: ""
   client:
     existingSecret:
-      name: "novelty-oidc-credentials"
+      name: ""
       secretKeys:
         clientIdKey: "client-id"
         clientSecretKey: "client-secret"
