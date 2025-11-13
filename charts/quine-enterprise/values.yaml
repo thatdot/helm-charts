@@ -135,7 +135,7 @@ oidc:
     loginPath: "auth"
   client:
     existingSecret:
-      name: ""
+      name: "quine-enterprise-oidc-credentials"
       secretKeys:
         clientIdKey: "client-id"
         clientSecretKey: "client-secret"
