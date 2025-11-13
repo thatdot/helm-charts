@@ -78,29 +78,11 @@ OIDC Configuration Section
 {{- if .Values.oidc.provider.loginPath }}
 -Dthatdot.novelty.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
 {{- end }}
-{{- if .Values.oidc.client.existingSecret.name }}
--Dthatdot.novelty.auth.oidc.full.client.id="${OIDC_CLIENT_ID}"
--Dthatdot.novelty.auth.oidc.full.client.secret="${OIDC_CLIENT_SECRET}"
-{{- else }}
+{{- if not .Values.oidc.client.existingSecret.name }}
 {{- fail "oidc.client.existingSecret.name is required when oidc.enabled is true" }}
-{{- end }}
-{{- if .Values.oidc.session.autoGenerate }}
--Dthatdot.novelty.auth.session.secret="{{ include "novelty.generateSessionSecret" . }}"
-{{- else if .Values.oidc.session.existingSecret.name }}
--Dthatdot.novelty.auth.session.secret="${OIDC_SESSION_SECRET}"
-{{- else if .Values.oidc.session.secret }}
--Dthatdot.novelty.auth.session.secret="{{ .Values.oidc.session.secret }}"
 {{- end }}
 -Dthatdot.novelty.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
 -Dthatdot.novelty.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
 {{- end }}
 {{- end }}
 
-{{/*
-Generate a random alphanumeric session secret (32 characters)
-This uses Helm's built-in randAlphaNum function to create a deterministic
-random string that will remain constant for the lifetime of the release.
-*/}}
-{{- define "novelty.generateSessionSecret" -}}
-{{- randAlphaNum 32 }}
-{{- end }}

@@ -248,29 +248,11 @@ OIDC Configuration Section
 {{- if .Values.oidc.provider.loginPath }}
 -Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
 {{- end }}
-{{- if .Values.oidc.client.existingSecret.name }}
--Dquine.auth.oidc.full.client.id="${OIDC_CLIENT_ID}"
--Dquine.auth.oidc.full.client.secret="${OIDC_CLIENT_SECRET}"
-{{- else }}
+{{- if not .Values.oidc.client.existingSecret.name }}
 {{- fail "oidc.client.existingSecret.name is required when oidc.enabled is true" }}
-{{- end }}
-{{- if .Values.oidc.session.autoGenerate }}
--Dquine.auth.session.secret="{{ include "quine-enterprise.generateSessionSecret" . }}"
-{{- else if .Values.oidc.session.existingSecret.name }}
--Dquine.auth.session.secret="${OIDC_SESSION_SECRET}"
-{{- else if .Values.oidc.session.secret }}
--Dquine.auth.session.secret="{{ .Values.oidc.session.secret }}"
 {{- end }}
 -Dquine.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
 -Dquine.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
 {{- end }}
 {{- end }}
 
-{{/*
-Generate a random alphanumeric session secret (32 characters)
-This uses Helm's built-in randAlphaNum function to create a deterministic
-random string that will remain constant for the lifetime of the release.
-*/}}
-{{- define "quine-enterprise.generateSessionSecret" -}}
-{{- randAlphaNum 32 }}
-{{- end }}

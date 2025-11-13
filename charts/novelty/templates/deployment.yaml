@@ -26,30 +26,34 @@ spec:
           env:
           - name: JDK_JAVA_OPTIONS
             value: |
+              -Dconfig.override_with_env_vars=true
               {{ include "novelty.licenseConfiguration" . | nindent 14 }}
               {{ include "novelty.oidcConfiguration" . | nindent 14 }}
               {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
               {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
-          {{- if and (not .Values.oidc.session.autoGenerate) .Values.oidc.session.existingSecret.name }}
-          - name: OIDC_SESSION_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.oidc.session.existingSecret.name }}
-                key: {{ .Values.oidc.session.existingSecret.key }}
-          {{- end }}
           {{- if and .Values.oidc.enabled .Values.oidc.client.existingSecret.name }}
-          - name: OIDC_CLIENT_ID
+          - name: CONFIG_FORCE_thatdot_novelty_auth_oidc_full_client_id
             valueFrom:
               secretKeyRef:
                 name: {{ .Values.oidc.client.existingSecret.name }}
                 key: {{ .Values.oidc.client.existingSecret.secretKeys.clientIdKey }}
-          - name: OIDC_CLIENT_SECRET
+          - name: CONFIG_FORCE_thatdot_novelty_auth_oidc_full_client_secret
             valueFrom:
               secretKeyRef:
                 name: {{ .Values.oidc.client.existingSecret.name }}
                 key: {{ .Values.oidc.client.existingSecret.secretKeys.clientSecretKey }}
+          {{- end }}
+          {{- if .Values.oidc.session.autoGenerate }}
+          - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
+            value: "{{ randAlphaNum 32 }}"
+          {{- else if .Values.oidc.session.existingSecret.name }}
+          - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.session.existingSecret.name }}
+                key: {{ .Values.oidc.session.existingSecret.key }}
           {{- end }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
