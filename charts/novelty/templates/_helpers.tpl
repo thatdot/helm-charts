@@ -98,3 +98,11 @@ OIDC Configuration Section
 {{- end }}
 {{- end }}
 
+{{/*
+Log Level Configuration Section
+*/}}
+{{- define "novelty.logLevelConfiguration" -}}
+{{- if .Values.thatdot.logLevel }}
+-Dthatdot.loglevel={{ .Values.thatdot.logLevel }}
+{{- end }}
+{{- end }}

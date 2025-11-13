@@ -91,5 +91,10 @@ oidc:
     expirationSeconds: 3600
     secureCookies: true
 
+# Logging Configuration
+thatdot:
+  # Cluster-wide log level (ERROR, WARN, INFO, DEBUG)
+  logLevel: WARN
+
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""
