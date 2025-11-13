@@ -108,23 +108,6 @@ metrics:
     # Port opened up on Quine Enterprise pod, exposing Prometheus Java Agent metrics
     port: 9090
 
-# Enable HTTP Basic Authentication for the embedded NGINX reverse‑proxy.
-#
-# `htpasswd` must contain one or more lines in the exact format accepted by the
-# NGINX `auth_basic_user_file` directive:
-#   <username>:<hashed‑password>
-# See the official docs: https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html#auth_basic_user_file
-#
-# Example on how to generate a hashed password:
-#   Creates a salt from 12 random bytes, encoded in base64.
-#   Uses that salt to generate a hashed password using the SHA256-crypt algorithm.
-#
-#   salt=$(openssl rand -base64 12)
-#   openssl passwd -5 -salt $salt
-basicAuth:
-  enabled: false
-  htpasswd: ""
-
 # OIDC Configuration for OpenID Connect authentication
 oidc:
   enabled: false
