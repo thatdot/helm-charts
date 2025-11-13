@@ -132,7 +132,7 @@ oidc:
     locationUrl: ""
     authorizationUrl: ""
     tokenUrl: ""
-    loginPath: "auth"
+    loginPath: ""
   client:
     existingSecret:
       name: "quine-enterprise-oidc-credentials"

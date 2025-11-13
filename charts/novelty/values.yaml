@@ -76,7 +76,7 @@ oidc:
     locationUrl: ""
     authorizationUrl: ""
     tokenUrl: ""
-    loginPath: "auth"
+    loginPath: ""
   client:
     existingSecret:
       name: "novelty-oidc-credentials"
