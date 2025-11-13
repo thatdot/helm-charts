@@ -7,8 +7,10 @@ fullnameOverride: ""
 
 replicaCount: 1
 
-# License key required for Novelty
-licenseKey: ""
+# License key secret required for Novelty
+licenseKeySecret:
+  name: ""
+  key: ""
 
 # Metrics Configuration:
 metrics:

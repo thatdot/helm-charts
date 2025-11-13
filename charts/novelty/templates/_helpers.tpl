@@ -51,13 +51,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-License Configuration Section
+License Key Secret Validation Section
 */}}
-{{- define "novelty.licenseConfiguration" -}}
-{{- if .Values.licenseKey }}
--Dthatdot.novelty.license-key={{ .Values.licenseKey }}
-{{- else }}
-{{- fail "licenseKey is required. Please provide a valid license key from thatDot." }}
+{{- define "novelty.licenseKeyValidation" -}}
+{{- if not .Values.licenseKeySecret.name }}
+{{- fail "licenseKeySecret.name is required. Please provide a valid license key secret from thatDot." }}
+{{- end }}
+{{- if not .Values.licenseKeySecret.key }}
+{{- fail "licenseKeySecret.key is required. Please specify the key containing the license key in the secret." }}
 {{- end }}
 {{- end }}
 

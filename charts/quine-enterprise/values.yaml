@@ -14,8 +14,10 @@ thatdot:
   # Possible values: ERROR, WARN, INFO, DEBUG
   logLevel: WARN
 
-# License key required for Quine Enterprise
-licenseKey: ""
+# License key secret required for Quine Enterprise
+licenseKeySecret:
+  name: ""
+  key: ""
 
 # Cassandra Persistor Settings:
 # Set enabled to true in order to configure the cassandra persistor.

@@ -55,7 +55,6 @@ spec:
               {{ include "quine-enterprise.persistenceConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.storeConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.metricsConfiguration" . | nindent 14 }}
-              {{ include "quine-enterprise.licenseConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.oidcConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
@@ -87,6 +86,12 @@ spec:
                 key: {{ .Values.oidc.session.existingSecret.key }}
           {{- end }}
           {{- end }}
+          {{ include "quine-enterprise.licenseKeyValidation" . }}
+          - name: CONFIG_FORCE_quine_license__key
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.licenseKeySecret.name }}
+                key: {{ .Values.licenseKeySecret.key }}
           {{ include "quine-enterprise.probes" . | nindent 10 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

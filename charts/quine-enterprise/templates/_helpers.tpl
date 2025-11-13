@@ -171,13 +171,14 @@ Metrics Configuration Section
 {{- end }}
 
 {{/*
-License Configuration Section
+License Key Secret Validation Section
 */}}
-{{- define "quine-enterprise.licenseConfiguration" -}}
-{{- if .Values.licenseKey }}
--Dquine.license-key={{ .Values.licenseKey }}
-{{- else }}
-{{- fail "licenseKey is required. Please provide a valid license key from thatDot." }}
+{{- define "quine-enterprise.licenseKeyValidation" -}}
+{{- if not .Values.licenseKeySecret.name }}
+{{- fail "licenseKeySecret.name is required. Please provide a valid license key secret from thatDot." }}
+{{- end }}
+{{- if not .Values.licenseKeySecret.key }}
+{{- fail "licenseKeySecret.key is required. Please specify the key containing the license key in the secret." }}
 {{- end }}
 {{- end }}
 

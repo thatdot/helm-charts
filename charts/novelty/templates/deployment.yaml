@@ -28,7 +28,6 @@ spec:
             value: |
               -Dconfig.override_with_env_vars=true
               {{ include "novelty.logLevelConfiguration" . | nindent 14 }}
-              {{ include "novelty.licenseConfiguration" . | nindent 14 }}
               {{ include "novelty.oidcConfiguration" . | nindent 14 }}
               {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
@@ -61,6 +60,12 @@ spec:
                 key: {{ .Values.oidc.session.existingSecret.key }}
           {{- end }}
           {{- end }}
+          {{ include "novelty.licenseKeyValidation" . }}
+          - name: CONFIG_FORCE_thatdot_novelty_license__key
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.licenseKeySecret.name }}
+                key: {{ .Values.licenseKeySecret.key }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
           livenessProbe:
