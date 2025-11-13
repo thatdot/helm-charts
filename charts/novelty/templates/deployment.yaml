@@ -45,6 +45,7 @@ spec:
                 name: {{ .Values.oidc.client.existingSecret.name }}
                 key: {{ .Values.oidc.client.existingSecret.secretKeys.clientSecretKey }}
           {{- end }}
+          {{- if .Values.oidc.enabled }}
           {{- if .Values.oidc.session.autoGenerate }}
           - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
             value: "{{ randAlphaNum 32 }}"
@@ -54,6 +55,7 @@ spec:
               secretKeyRef:
                 name: {{ .Values.oidc.session.existingSecret.name }}
                 key: {{ .Values.oidc.session.existingSecret.key }}
+          {{- end }}
           {{- end }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
