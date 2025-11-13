@@ -137,6 +137,10 @@ oidc:
     id: ""
     secret: ""
   session:
+    autoGenerate: true
+    existingSecret:
+      name: ""
+      key: ""
     secret: ""
     expirationSeconds: 3600
     secureCookies: false
