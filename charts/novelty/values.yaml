@@ -88,7 +88,6 @@ oidc:
     existingSecret:
       name: ""
       key: ""
-    secret: ""
     expirationSeconds: 3600
     secureCookies: true
 
