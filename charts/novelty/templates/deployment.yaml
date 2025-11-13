@@ -59,12 +59,12 @@ spec:
           - containerPort: {{ .Values.service.internalPort }}
           livenessProbe:
             httpGet:
-              path: /api/v1/admin/liveness
+              path: /api/v2/admin/liveness
               port: 8080
             initialDelaySeconds: 5
           readinessProbe:
             httpGet:
-              path: /api/v1/admin/liveness
+              path: /api/v2/admin/liveness
               port: 8080
             initialDelaySeconds: 5
           resources:

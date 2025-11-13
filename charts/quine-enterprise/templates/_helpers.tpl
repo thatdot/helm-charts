@@ -176,13 +176,13 @@ Liveness and Readiness Probes
 {{- if not .Values.basicAuth.enabled }}
 livenessProbe:
   httpGet:
-    path: /api/v1/admin/liveness
+    path: /api/v2/admin/liveness
     port: 8080
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
   httpGet:
-    path: /api/v1/admin/liveness
+    path: /api/v2/admin/liveness
     port: 8080
   initialDelaySeconds: 5
   timeoutSeconds: 10
@@ -193,7 +193,7 @@ livenessProbe:
     - curl
     - '--silent'
     - '--fail'
-    - http://localhost:8081/api/v1/admin/liveness
+    - http://localhost:8081/api/v2/admin/liveness
   initialDelaySeconds: 5
 readinessProbe:
   exec:
@@ -201,7 +201,7 @@ readinessProbe:
     - curl
     - '--silent'
     - '--fail'
-    - http://localhost:8081/api/v1/admin/liveness
+    - http://localhost:8081/api/v2/admin/liveness
   initialDelaySeconds: 5
 {{- end }}
 {{- end }}
