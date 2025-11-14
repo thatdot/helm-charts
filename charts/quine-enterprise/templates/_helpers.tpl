@@ -139,71 +139,21 @@ Cassandra Auth Environment
 {{- end }}
 
 {{/*
-NGINX Basic Auth
-*/}}
-{{- define "quine-enterprise.basicAuth" -}}
-{{- if .Values.basicAuth.enabled }}
-- name: USE_NGINX
-  value: "true"
-- name: USE_BASIC_AUTH
-  value: "true"
-{{- end }}
-{{- end }}
-
-{{/*
-Basic Auth supporting volumes and volume mounts
-*/}}
-{{- define "quine-enterprise.basicAuthVolumes" }}
-{{- if .Values.basicAuth.enabled }}
-- name: credentials-volume
-  secret:
-    secretName: {{ include "quine-enterprise.fullname" . }}-credentials
-{{- end }}
-{{- end }}
-
-{{- define "quine-enterprise.basicAuthVolumeMounts" }}
-{{- if .Values.basicAuth.enabled }}
-- name: credentials-volume
-  readOnly: true
-  mountPath: /credentials
-{{- end }}
-{{- end }}
-
-{{/*
 Liveness and Readiness Probes
 */}}
 {{- define "quine-enterprise.probes" -}}
-{{- if not .Values.basicAuth.enabled }}
 livenessProbe:
   httpGet:
-    path: /api/v1/admin/liveness
+    path: /api/v2/admin/liveness
     port: 8080
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
   httpGet:
-    path: /api/v1/admin/liveness
+    path: /api/v2/admin/liveness
     port: 8080
   initialDelaySeconds: 5
   timeoutSeconds: 10
-{{- else }}
-livenessProbe:
-  exec:
-    command:
-    - curl
-    - '--silent'
-    - '--fail'
-    - http://localhost:8081/api/v1/admin/liveness
-  initialDelaySeconds: 5
-readinessProbe:
-  exec:
-    command:
-    - curl
-    - '--silent'
-    - '--fail'
-    - http://localhost:8081/api/v1/admin/liveness
-  initialDelaySeconds: 5
-{{- end }}
 {{- end }}
 
 {{/*
@@ -221,11 +171,51 @@ Metrics Configuration Section
 {{- end }}
 
 {{/*
-Trial Configuration Section
+License Key Secret Validation Section
 */}}
-{{- define "quine-enterprise.trialConfiguration" -}}
-{{- if .Values.trial.enabled }}
--Dquine.trial.email={{ required "If trial version is enabled, Values.trial.email must be set" .Values.trial.email }}
--Dquine.trial.api-key={{ required "If trial version is enabled, Values.trial.apiKey must be set" .Values.trial.apiKey }}
+{{- define "quine-enterprise.licenseKeyValidation" -}}
+{{- if not .Values.licenseKeySecret.name }}
+{{- fail "licenseKeySecret.name is required. Please provide a valid license key secret from thatDot." }}
+{{- end }}
+{{- if not .Values.licenseKeySecret.key }}
+{{- fail "licenseKeySecret.key is required. Please specify the key containing the license key in the secret." }}
 {{- end }}
 {{- end }}
+
+{{/*
+OIDC Configuration Section
+*/}}
+{{- define "quine-enterprise.oidcConfiguration" -}}
+{{- if .Values.oidc.enabled }}
+{{- if not .Values.oidc.provider.locationUrl }}
+{{- fail "oidc.provider.locationUrl is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.provider.authorizationUrl }}
+{{- fail "oidc.provider.authorizationUrl is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.provider.tokenUrl }}
+{{- fail "oidc.provider.tokenUrl is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.provider.loginPath }}
+{{- fail "oidc.provider.loginPath is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.client.existingSecret.name }}
+{{- fail "oidc.client.existingSecret.name is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.session.autoGenerate }}
+{{- if not .Values.oidc.session.existingSecret.name }}
+{{- fail "oidc.session.existingSecret.name is required when oidc.enabled is true and autoGenerate is false" }}
+{{- end }}
+{{- if not .Values.oidc.session.existingSecret.key }}
+{{- fail "oidc.session.existingSecret.key is required when oidc.enabled is true and autoGenerate is false" }}
+{{- end }}
+{{- end }}
+-Dquine.auth.oidc.full.provider.location-url="{{ .Values.oidc.provider.locationUrl }}"
+-Dquine.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
+-Dquine.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
+-Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
+-Dquine.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
+-Dquine.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
+{{- end }}
+{{- end }}
+

@@ -51,11 +51,59 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Trial Configuration Section
+License Key Secret Validation Section
 */}}
-{{- define "novelty.trialConfiguration" -}}
-{{- if .Values.trial.enabled }}
--Dthatdot.novelty.trial.email={{ required "If trial version is enabled, Values.trial.email must be set" .Values.trial.email }}
--Dthatdot.novelty.trial.api-key={{ required "If trial version is enabled, Values.trial.apiKey must be set" .Values.trial.apiKey }}
+{{- define "novelty.licenseKeyValidation" -}}
+{{- if not .Values.licenseKeySecret.name }}
+{{- fail "licenseKeySecret.name is required. Please provide a valid license key secret from thatDot." }}
+{{- end }}
+{{- if not .Values.licenseKeySecret.key }}
+{{- fail "licenseKeySecret.key is required. Please specify the key containing the license key in the secret." }}
+{{- end }}
+{{- end }}
+
+{{/*
+OIDC Configuration Section
+*/}}
+{{- define "novelty.oidcConfiguration" -}}
+{{- if .Values.oidc.enabled }}
+{{- if not .Values.oidc.provider.locationUrl }}
+{{- fail "oidc.provider.locationUrl is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.provider.authorizationUrl }}
+{{- fail "oidc.provider.authorizationUrl is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.provider.tokenUrl }}
+{{- fail "oidc.provider.tokenUrl is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.provider.loginPath }}
+{{- fail "oidc.provider.loginPath is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.client.existingSecret.name }}
+{{- fail "oidc.client.existingSecret.name is required when oidc.enabled is true" }}
+{{- end }}
+{{- if not .Values.oidc.session.autoGenerate }}
+{{- if not .Values.oidc.session.existingSecret.name }}
+{{- fail "oidc.session.existingSecret.name is required when oidc.enabled is true and autoGenerate is false" }}
+{{- end }}
+{{- if not .Values.oidc.session.existingSecret.key }}
+{{- fail "oidc.session.existingSecret.key is required when oidc.enabled is true and autoGenerate is false" }}
+{{- end }}
+{{- end }}
+-Dthatdot.novelty.auth.oidc.full.provider.location-url="{{ .Values.oidc.provider.locationUrl }}"
+-Dthatdot.novelty.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
+-Dthatdot.novelty.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
+-Dthatdot.novelty.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
+-Dthatdot.novelty.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
+-Dthatdot.novelty.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
+{{- end }}
+{{- end }}
+
+{{/*
+Log Level Configuration Section
+*/}}
+{{- define "novelty.logLevelConfiguration" -}}
+{{- if .Values.thatdot.logLevel }}
+-Dthatdot.loglevel={{ .Values.thatdot.logLevel }}
 {{- end }}
 {{- end }}

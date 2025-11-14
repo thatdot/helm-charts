@@ -7,10 +7,10 @@ fullnameOverride: ""
 
 replicaCount: 1
 
-trial:
-  enabled: true
-  email: ""
-  apiKey: ""
+# License key secret required for Novelty
+licenseKeySecret:
+  name: ""
+  key: "license-key"
 
 # Metrics Configuration:
 metrics:
@@ -48,10 +48,14 @@ jmxRemote:
   ssl: false
   rmiHostname: localhost
 
+# The registry URL and credentials are provided by thatDot with your license key
 image:
-  repository: public.ecr.aws/thatdot/novelty-trial
+  repository: ""
   pullPolicy: IfNotPresent
   tag: ""
+
+# Registry credentials provided by thatDot
+imagePullSecrets: []
 
 service:
   name: novelty
@@ -66,6 +70,46 @@ resources:
   requests:
     cpu: 1024m
     memory: 2048Mi
+
+# OIDC Configuration for OpenID Connect authentication
+oidc:
+  # Enable OpenID Connect authentication
+  enabled: false
+  provider:
+    # OIDC provider base URL
+    locationUrl: ""
+    # OAuth2 authorization endpoint for login requests
+    authorizationUrl: ""
+    # OAuth2 token endpoint for exchanging auth codes
+    tokenUrl: ""
+    # OIDC provider's login endpoint path (appended to locationUrl for user redirect)
+    loginPath: ""
+  client:
+    existingSecret:
+      # Kubernetes secret containing OIDC client credentials
+      name: ""
+      secretKeys:
+        # Secret key name containing the OIDC client ID
+        clientIdKey: "client-id"
+        # Secret key name containing the OIDC client secret
+        clientSecretKey: "client-secret"
+  session:
+    # Auto-generate session encryption key if no existing secret provided
+    autoGenerate: true
+    existingSecret:
+      # Kubernetes secret containing session encryption key (if not auto-generating)
+      name: ""
+      # Secret key name containing the session encryption key
+      key: ""
+    # Session timeout
+    expirationSeconds: 3600
+    # Use HTTPS-only secure cookies for session handling
+    secureCookies: true
+
+# Logging Configuration
+thatdot:
+  # Cluster-wide log level (ERROR, WARN, INFO, DEBUG)
+  logLevel: WARN
 
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""

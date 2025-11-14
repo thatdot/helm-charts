@@ -55,11 +55,43 @@ spec:
               {{ include "quine-enterprise.persistenceConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.storeConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.metricsConfiguration" . | nindent 14 }}
-              {{ include "quine-enterprise.trialConfiguration" . | nindent 14 }}
+              {{ include "quine-enterprise.oidcConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
           {{ include "quine-enterprise.cassandraAuthEnv" . | nindent 10 }}
-          {{ include "quine-enterprise.basicAuth" . | nindent 10 }}
+          {{- if and .Values.oidc.enabled .Values.oidc.client.existingSecret.name }}
+          - name: CONFIG_FORCE_quine_auth_oidc_full_client_id
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.client.existingSecret.name }}
+                key: {{ .Values.oidc.client.existingSecret.secretKeys.clientIdKey }}
+          - name: CONFIG_FORCE_quine_auth_oidc_full_client_secret
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.client.existingSecret.name }}
+                key: {{ .Values.oidc.client.existingSecret.secretKeys.clientSecretKey }}
+          {{- end }}
+          {{- if .Values.oidc.enabled }}
+          {{- if .Values.oidc.session.autoGenerate }}
+          - name: CONFIG_FORCE_quine_auth_session_secret
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "quine-enterprise.fullname" . }}-session-secret
+                key: secret
+          {{- else if .Values.oidc.session.existingSecret.name }}
+          - name: CONFIG_FORCE_quine_auth_session_secret
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.session.existingSecret.name }}
+                key: {{ .Values.oidc.session.existingSecret.key }}
+          {{- end }}
+          {{- end }}
+          {{ include "quine-enterprise.licenseKeyValidation" . }}
+          - name: CONFIG_FORCE_quine_license__key
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.licenseKeySecret.name }}
+                key: {{ .Values.licenseKeySecret.key }}
           {{ include "quine-enterprise.probes" . | nindent 10 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -67,14 +99,12 @@ spec:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-            {{ include "quine-enterprise.basicAuthVolumeMounts" . | nindent 12 }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       volumes:
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{ include "quine-enterprise.basicAuthVolumes" . | nindent 8 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

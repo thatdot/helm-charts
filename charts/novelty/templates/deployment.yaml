@@ -24,23 +24,58 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          - name: JDK_JAVA_OPTIONS 
+          - name: JDK_JAVA_OPTIONS
             value: |
-              {{ include "novelty.trialConfiguration" . | nindent 14 }}
+              -Dconfig.override_with_env_vars=true
+              {{ include "novelty.logLevelConfiguration" . | nindent 14 }}
+              {{ include "novelty.oidcConfiguration" . | nindent 14 }}
               {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
               {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
+          {{- if and .Values.oidc.enabled .Values.oidc.client.existingSecret.name }}
+          - name: CONFIG_FORCE_thatdot_novelty_auth_oidc_full_client_id
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.client.existingSecret.name }}
+                key: {{ .Values.oidc.client.existingSecret.secretKeys.clientIdKey }}
+          - name: CONFIG_FORCE_thatdot_novelty_auth_oidc_full_client_secret
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.client.existingSecret.name }}
+                key: {{ .Values.oidc.client.existingSecret.secretKeys.clientSecretKey }}
+          {{- end }}
+          {{- if .Values.oidc.enabled }}
+          {{- if .Values.oidc.session.autoGenerate }}
+          - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "novelty.fullname" . }}-session-secret
+                key: secret
+          {{- else if .Values.oidc.session.existingSecret.name }}
+          - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.oidc.session.existingSecret.name }}
+                key: {{ .Values.oidc.session.existingSecret.key }}
+          {{- end }}
+          {{- end }}
+          {{ include "novelty.licenseKeyValidation" . }}
+          - name: CONFIG_FORCE_thatdot_novelty_license__key
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.licenseKeySecret.name }}
+                key: {{ .Values.licenseKeySecret.key }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
           livenessProbe:
             httpGet:
-              path: /api/v1/admin/liveness
+              path: /api/v2/admin/liveness
               port: 8080
             initialDelaySeconds: 5
           readinessProbe:
             httpGet:
-              path: /api/v1/admin/liveness
+              path: /api/v2/admin/liveness
               port: 8080
             initialDelaySeconds: 5
           resources:

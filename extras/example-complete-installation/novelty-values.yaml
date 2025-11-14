@@ -1,4 +1,6 @@
-trial:
-  enabled: true
-  email: ""
-  apiKey: ""
+licenseKey: ""
+
+image:
+  repository: ""
+
+imagePullSecrets: []

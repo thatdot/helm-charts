@@ -1,10 +1,12 @@
 
 hostCount: 3
 
-trial:
-  enabled: true
-  email: ""
-  apiKey: ""
+licenseKey: ""
+
+image:
+  repository: ""
+
+imagePullSecrets: []
 
 service:
   type: ClusterIP

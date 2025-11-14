@@ -14,11 +14,10 @@ thatdot:
   # Possible values: ERROR, WARN, INFO, DEBUG
   logLevel: WARN
 
-# Trial authorization fields. 
-trial:
-  enabled: true
-  email: ""
-  apiKey: ""
+# License key secret required for Quine Enterprise
+licenseKeySecret:
+  name: ""
+  key: "license-key"
 
 # Cassandra Persistor Settings:
 # Set enabled to true in order to configure the cassandra persistor.
@@ -111,30 +110,50 @@ metrics:
     # Port opened up on Quine Enterprise pod, exposing Prometheus Java Agent metrics
     port: 9090
 
-# Enable HTTP Basic Authentication for the embedded NGINX reverse‑proxy.
-#
-# `htpasswd` must contain one or more lines in the exact format accepted by the
-# NGINX `auth_basic_user_file` directive:
-#   <username>:<hashed‑password>
-# See the official docs: https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html#auth_basic_user_file
-#
-# Example on how to generate a hashed password:
-#   Creates a salt from 12 random bytes, encoded in base64.
-#   Uses that salt to generate a hashed password using the SHA256-crypt algorithm.
-#
-#   salt=$(openssl rand -base64 12)
-#   openssl passwd -5 -salt $salt
-basicAuth:
+# OIDC Configuration for OpenID Connect authentication
+oidc:
+  # Enable OpenID Connect authentication
   enabled: false
-  htpasswd: ""
+  provider:
+    # OIDC provider base URL
+    locationUrl: ""
+    # OAuth2 authorization endpoint for login requests
+    authorizationUrl: ""
+    # OAuth2 token endpoint for exchanging auth codes
+    tokenUrl: ""
+    # OIDC provider's login endpoint path (appended to locationUrl for user redirect)
+    loginPath: ""
+  client:
+    existingSecret:
+      # Kubernetes secret containing OIDC client credentials
+      name: ""
+      secretKeys:
+        # Secret key name containing the OIDC client ID
+        clientIdKey: "client-id"
+        # Secret key name containing the OIDC client secret
+        clientSecretKey: "client-secret"
+  session:
+    # Auto-generate session encryption key if no existing secret provided
+    autoGenerate: true
+    existingSecret:
+      # Kubernetes secret containing session encryption key (if not auto-generating)
+      name: ""
+      # Secret key name containing the session encryption key
+      key: ""
+    # Session timeout
+    expirationSeconds: 3600
+    # Use HTTPS-only secure cookies for session handling
+    secureCookies: true 
 
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
+# The registry URL and credentials are provided by thatDot with your license key
 image:
-  repository: public.ecr.aws/thatdot/streaming-graph-trial
+  repository: ""
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+# Registry credentials provided by thatDot (e.g., [{"name": "thatdot-registry"}])
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

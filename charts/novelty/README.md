@@ -32,10 +32,16 @@ To uninstall the chart:
 helm delete my-novelty
 ```
 
-## Trial
+## License Key
 
-thatDot Novelty is priopriatary software. A free trial evaluation license is
-available from [thatdot.com](https://www.thatdot.com/free-trial/). When using
-this helm chart with a trial license, `Values.trial.enabled` must be set to
-true and the `Values.trial.email` and `Values.trial.apiKey` fields must be set.
-The API key will be sent via email after registering for a trial license.
+Novelty requires a valid license key to operate. The license key must be provided via the `licenseKey` configuration parameter.
+
+### Obtaining a License Key
+
+thatDot provides license keys as part of an evaluation agreement or purchase order. To schedule a demo or purchase a license, please:
+
+- Request a demo: [https://www.thatdot.com/request-a-demo/](https://www.thatdot.com/request-a-demo/)
+- Email sales: [sales@thatdot.com](mailto:sales@thatdot.com)
+- Contact thatDot: [https://www.thatdot.com/contact-us/](https://www.thatdot.com/contact-us/)
+
+When you receive your license key, thatDot will also provide the private Docker registry URL and credentials.
