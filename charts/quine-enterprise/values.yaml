@@ -112,25 +112,38 @@ metrics:
 
 # OIDC Configuration for OpenID Connect authentication
 oidc:
+  # Enable OpenID Connect authentication
   enabled: false
   provider:
+    # OIDC provider base URL
     locationUrl: ""
+    # OAuth2 authorization endpoint for login requests
     authorizationUrl: ""
+    # OAuth2 token endpoint for exchanging auth codes
     tokenUrl: ""
+    # OIDC provider's login endpoint path (appended to locationUrl for user redirect)
     loginPath: ""
   client:
     existingSecret:
+      # Kubernetes secret containing OIDC client credentials
       name: ""
       secretKeys:
+        # Secret key name containing the OIDC client ID
         clientIdKey: "client-id"
+        # Secret key name containing the OIDC client secret
         clientSecretKey: "client-secret"
   session:
+    # Auto-generate session encryption key if no existing secret provided
     autoGenerate: true
     existingSecret:
+      # Kubernetes secret containing session encryption key (if not auto-generating)
       name: ""
+      # Secret key name containing the session encryption key
       key: ""
+    # Session timeout
     expirationSeconds: 3600
-    secureCookies: true
+    # Use HTTPS-only secure cookies for session handling
+    secureCookies: true 
 
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
 # The registry URL and credentials are provided by thatDot with your license key
