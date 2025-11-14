@@ -10,7 +10,7 @@ replicaCount: 1
 # License key secret required for Novelty
 licenseKeySecret:
   name: ""
-  key: ""
+  key: "license-key"
 
 # Metrics Configuration:
 metrics:

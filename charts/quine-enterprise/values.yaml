@@ -17,7 +17,7 @@ thatdot:
 # License key secret required for Quine Enterprise
 licenseKeySecret:
   name: ""
-  key: ""
+  key: "license-key"
 
 # Cassandra Persistor Settings:
 # Set enabled to true in order to configure the cassandra persistor.
