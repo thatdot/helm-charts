@@ -3,6 +3,6 @@ name: quine
 description: A Helm chart for creating a thatDot Quine instance
 type: application
 
-version: 0.5.0
+version: 0.5.1
 
 appVersion: "2.0.0"

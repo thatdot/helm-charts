@@ -49,6 +49,7 @@ spec:
               {{ include "quine.persistenceConfiguration" . | nindent 14 }}
               {{ include "quine.storeConfiguration" . | nindent 14 }}
               {{ include "quine.metricsConfiguration" . | nindent 14 }}
+              {{ include "quine.webserverConfiguration" . | nindent 14 }}
               {{ include "quine.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
           {{ include "quine.cassandraAuthEnv" . | nindent 10 }}

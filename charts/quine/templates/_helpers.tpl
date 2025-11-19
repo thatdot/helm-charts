@@ -73,6 +73,17 @@ Persistence Config Section
 {{- end }}
 
 {{/*
+Webserver Config Section
+*/}}
+{{- define "quine.webserverConfiguration" -}}
+-Dquine.webserver.enabled={{ .Values.webserver.enabled }}
+-Dquine.webserver.address={{ .Values.webserver.address }}
+-Dquine.webserver.port={{ .Values.webserver.port }}
+-Dquine.webserver.use-tls={{ .Values.webserver.useTls }}
+-Dquine.webserver.use-m-tls={{ .Values.webserver.useMTls }}
+{{- end }}
+
+{{/*
 Store Config Section
 */}}
 {{- define "quine.storeConfiguration" -}}
@@ -125,12 +136,18 @@ livenessProbe:
   httpGet:
     path: /api/v1/admin/liveness
     port: 8080
+    {{- if .Values.webserver.useTls }}
+    scheme: HTTPS
+    {{- end }}
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
   httpGet:
     path: /api/v1/admin/liveness
     port: 8080
+    {{- if .Values.webserver.useTls }}
+    scheme: HTTPS
+    {{- end }}
   initialDelaySeconds: 5
   timeoutSeconds: 10
 {{- end }}

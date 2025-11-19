@@ -107,3 +107,14 @@ Log Level Configuration Section
 -Dthatdot.loglevel={{ .Values.thatdot.logLevel }}
 {{- end }}
 {{- end }}
+
+{{/*
+Webserver Config Section
+*/}}
+{{- define "novelty.webserverConfiguration" -}}
+-Dthatdot.novelty.webserver.enabled={{ .Values.webserver.enabled }}
+-Dthatdot.novelty.webserver.address={{ .Values.webserver.address }}
+-Dthatdot.novelty.webserver.port={{ .Values.webserver.port }}
+-Dthatdot.novelty.webserver.use-tls={{ .Values.webserver.useTls }}
+-Dthatdot.novelty.webserver.use-m-tls={{ .Values.webserver.useMTls }}
+{{- end }}

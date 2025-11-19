@@ -111,5 +111,12 @@ thatdot:
   # Cluster-wide log level (ERROR, WARN, INFO, DEBUG)
   logLevel: WARN
 
+webserver:
+  enabled: true
+  address: 0.0.0.0
+  port: 8080
+  useTls: false
+  useMTls: false
+
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""
