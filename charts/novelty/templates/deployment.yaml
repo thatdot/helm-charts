@@ -70,20 +70,23 @@ spec:
                 key: {{ .Values.licenseKeySecret.key }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
-          {{- if .Values.webserver.useMTls }}
+          {{- if .Values.webserver.useMTls.enabled }}
+          {{- if not .Values.webserver.useMTls.clientCertificateConfigMap }}
+          {{- fail "webserver.useMTls.enabled is true but clientCertificateConfigMap is not set" }}
+          {{- end }}
           livenessProbe:
             exec:
               command:
                 - /bin/sh
                 - -c
-                - curl --cacert /certs/ca.pem --cert /certs/client.pem --key /certs/client-key.pem --silent -v https://localhost:8080/api/v2/admin/liveness
+                - curl --cacert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/ca.pem --cert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client.pem --key /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v2/admin/liveness
             initialDelaySeconds: 5
           readinessProbe:
             exec:
               command:
                 - /bin/sh
                 - -c
-                - curl --cacert /certs/ca.pem --cert /certs/client.pem --key /certs/client-key.pem --silent -v https://localhost:8080/api/v2/admin/liveness
+                - curl --cacert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/ca.pem --cert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client.pem --key /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v2/admin/liveness
             initialDelaySeconds: 5
           {{- else }}
           livenessProbe:
@@ -109,37 +112,24 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.webserver.useMTls }}
+          {{- if .Values.webserver.useMTls.enabled }}
           {{- if not .Values.volumeMounts }}
           volumeMounts:
           {{- end }}
-            - name: ca-certificates
-              mountPath: /certs/ca.pem
-              subPath: ca.pem
-              readOnly: true
-            - name: client-certificates
-              mountPath: /certs/client.pem
-              subPath: client.pem
-              readOnly: true
-            - name: client-certificates
-              mountPath: /certs/client-key.pem
-              subPath: client-key.pem
+            - name: tls-certificates
+              mountPath: /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}
               readOnly: true
           {{- end }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.webserver.useMTls }}
+      {{- if .Values.webserver.useMTls.enabled }}
       {{- if not .Values.volumes }}
       volumes:
       {{- end }}
-        - name: ca-certificates
+        - name: tls-certificates
           configMap:
-            name: ca-certificates
-            defaultMode: 0444
-        - name: client-certificates
-          configMap:
-            name: client-certificates
+            name: {{ .Values.webserver.useMTls.clientCertificateConfigMap }}
             defaultMode: 0444
       {{- end }}

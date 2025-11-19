@@ -101,7 +101,7 @@ Webserver Config Section
 -Dquine.webserver.address={{ .Values.webserver.address }}
 -Dquine.webserver.port={{ .Values.webserver.port }}
 -Dquine.webserver.use-tls={{ .Values.webserver.useTls }}
--Dquine.webserver.use-m-tls={{ .Values.webserver.useMTls }}
+-Dquine.webserver.use-m-tls={{ .Values.webserver.useMTls.enabled }}
 {{- end }}
 
 {{/*
@@ -167,13 +167,16 @@ Cassandra Auth Environment
 Liveness and Readiness Probes
 */}}
 {{- define "quine-enterprise.probes" -}}
-{{- if .Values.webserver.useMTls }}
+{{- if .Values.webserver.useMTls.enabled }}
+{{- if not .Values.webserver.useMTls.clientCertificateConfigMap }}
+{{- fail "webserver.useMTls.enabled is true but clientCertificateConfigMap is not set" }}
+{{- end }}
 livenessProbe:
   exec:
     command:
       - /bin/sh
       - -c
-      - curl --cacert /certs/ca.pem --cert /certs/client.pem --key /certs/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v2/admin/liveness
+      - curl --cacert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/ca.pem --cert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client.pem --key /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v2/admin/liveness
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
@@ -181,7 +184,7 @@ readinessProbe:
     command:
       - /bin/sh
       - -c
-      - curl --cacert /certs/ca.pem --cert /certs/client.pem --key /certs/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v2/admin/liveness
+      - curl --cacert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/ca.pem --cert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client.pem --key /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v2/admin/liveness
   initialDelaySeconds: 5
   timeoutSeconds: 10
 {{- else }}

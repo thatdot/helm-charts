@@ -116,7 +116,9 @@ webserver:
   address: 0.0.0.0
   port: 8080
   useTls: false
-  useMTls: false
+  useMTls:
+    enabled: false
+    clientCertificateConfigMap: ""
 
 webserverAdvertise:
   enabled: false
@@ -124,9 +126,19 @@ webserverAdvertise:
   port:
 
 # mTLS Configuration
-# When webserver.useMTls is enabled, the following ConfigMaps must be created in the cluster:
-# - ca-certificates: Contains the CA certificate in PEM format with key 'ca.pem'
-# - client-certificates: Contains client certificate and key with keys 'client.pem' and 'client-key.pem'
+# When webserver.useMTls.enabled is true, a ConfigMap containing client certificates must be specified.
+# The ConfigMap should contain three files in PEM format:
+# - ca.pem: CA certificate for verifying the server
+# - client.pem: Client certificate for mTLS authentication
+# - client-key.pem: Client private key for mTLS authentication
+#
+# Example ConfigMap creation:
+#   kubectl create configmap my-tls-certs \
+#     --from-file=ca.pem=path/to/ca.pem \
+#     --from-file=client.pem=path/to/client.pem \
+#     --from-file=client-key.pem=path/to/client-key.pem
+#
+# Then set: webserver.useMTls.clientCertificateConfigMap: my-tls-certs
 
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""

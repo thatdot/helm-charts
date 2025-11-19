@@ -116,7 +116,7 @@ Webserver Config Section
 -Dthatdot.novelty.webserver.address={{ .Values.webserver.address }}
 -Dthatdot.novelty.webserver.port={{ .Values.webserver.port }}
 -Dthatdot.novelty.webserver.use-tls={{ .Values.webserver.useTls }}
--Dthatdot.novelty.webserver.use-m-tls={{ .Values.webserver.useMTls }}
+-Dthatdot.novelty.webserver.use-m-tls={{ .Values.webserver.useMTls.enabled }}
 {{- end }}
 
 {{/*
