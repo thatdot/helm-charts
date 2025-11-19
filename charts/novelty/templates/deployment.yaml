@@ -70,6 +70,22 @@ spec:
                 key: {{ .Values.licenseKeySecret.key }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
+          {{- if .Values.webserver.useMTls }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl --cacert /certs/ca.pem --cert /certs/client.pem --key /certs/client-key.pem --silent -v https://localhost:8080/api/v2/admin/liveness
+            initialDelaySeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl --cacert /certs/ca.pem --cert /certs/client.pem --key /certs/client-key.pem --silent -v https://localhost:8080/api/v2/admin/liveness
+            initialDelaySeconds: 5
+          {{- else }}
           livenessProbe:
             httpGet:
               path: /api/v2/admin/liveness
@@ -86,13 +102,44 @@ spec:
               scheme: HTTPS
               {{- end }}
             initialDelaySeconds: 5
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- if .Values.webserver.useMTls }}
+          {{- if not .Values.volumeMounts }}
+          volumeMounts:
+          {{- end }}
+            - name: ca-certificates
+              mountPath: /certs/ca.pem
+              subPath: ca.pem
+              readOnly: true
+            - name: client-certificates
+              mountPath: /certs/client.pem
+              subPath: client.pem
+              readOnly: true
+            - name: client-certificates
+              mountPath: /certs/client-key.pem
+              subPath: client-key.pem
+              readOnly: true
+          {{- end }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.webserver.useMTls }}
+      {{- if not .Values.volumes }}
+      volumes:
+      {{- end }}
+        - name: ca-certificates
+          configMap:
+            name: ca-certificates
+            defaultMode: 0444
+        - name: client-certificates
+          configMap:
+            name: client-certificates
+            defaultMode: 0444
       {{- end }}

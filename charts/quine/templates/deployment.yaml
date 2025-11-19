@@ -61,11 +61,35 @@ spec:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- if .Values.webserver.useMTls }}
+            - name: ca-certificates
+              mountPath: /certs/ca.pem
+              subPath: ca.pem
+              readOnly: true
+            - name: client-certificates
+              mountPath: /certs/client.pem
+              subPath: client.pem
+              readOnly: true
+            - name: client-certificates
+              mountPath: /certs/client-key.pem
+              subPath: client-key.pem
+              readOnly: true
+            {{- end }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       volumes:
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.webserver.useMTls }}
+        - name: ca-certificates
+          configMap:
+            name: ca-certificates
+            defaultMode: 0444
+        - name: client-certificates
+          configMap:
+            name: client-certificates
+            defaultMode: 0444
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

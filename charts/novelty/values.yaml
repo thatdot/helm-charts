@@ -123,5 +123,10 @@ webserverAdvertise:
   address:
   port:
 
+# mTLS Configuration
+# When webserver.useMTls is enabled, the following ConfigMaps must be created in the cluster:
+# - ca-certificates: Contains the CA certificate in PEM format with key 'ca.pem'
+# - client-certificates: Contains client certificate and key with keys 'client.pem' and 'client-key.pem'
+
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""

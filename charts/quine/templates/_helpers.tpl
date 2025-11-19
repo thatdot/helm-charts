@@ -146,6 +146,24 @@ Cassandra Auth Environment
 Liveness and Readiness Probes
 */}}
 {{- define "quine.probes" -}}
+{{- if .Values.webserver.useMTls }}
+livenessProbe:
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - curl --cacert /certs/ca.pem --cert /certs/client.pem --key /certs/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v1/admin/liveness
+  initialDelaySeconds: 5
+  timeoutSeconds: 10
+readinessProbe:
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - curl --cacert /certs/ca.pem --cert /certs/client.pem --key /certs/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v1/admin/liveness
+  initialDelaySeconds: 5
+  timeoutSeconds: 10
+{{- else }}
 livenessProbe:
   httpGet:
     path: /api/v1/admin/liveness
@@ -164,6 +182,7 @@ readinessProbe:
     {{- end }}
   initialDelaySeconds: 5
   timeoutSeconds: 10
+{{- end }}
 {{- end }}
 
 {{/*

@@ -31,6 +31,14 @@ webserverAdvertise:
   address:
   port:
 
+# mTLS Configuration
+# When webserver.useMTls is enabled, the following ConfigMaps must be created in the cluster:
+# - ca-certificates: Contains the CA certificate in PEM format with key 'ca.pem'
+# - client-certificates: Contains client certificate and key with keys 'client.pem' and 'client-key.pem'
+#
+# These are automatically mounted when useMTls is true.
+# The install script in the pentesting directory can create these ConfigMaps from JKS keystores.
+
 # Cassandra Persistor Settings:
 # Set enabled to true in order to configure the cassandra persistor.
 # NOTE: For now the cassandra persistor is the only one supported by this
