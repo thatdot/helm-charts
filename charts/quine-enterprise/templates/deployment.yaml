@@ -56,6 +56,7 @@ spec:
               {{ include "quine-enterprise.storeConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.metricsConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.webserverConfiguration" . | nindent 14 }}
+              {{ include "quine-enterprise.webserverAdvertiseConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.oidcConfiguration" . | nindent 14 }}
               {{ include "quine-enterprise.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}

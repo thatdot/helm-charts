@@ -84,6 +84,20 @@ Webserver Config Section
 {{- end }}
 
 {{/*
+Webserver Advertise Config Section
+*/}}
+{{- define "quine.webserverAdvertiseConfiguration" -}}
+{{- if .Values.webserverAdvertise.enabled }}
+{{- if .Values.webserverAdvertise.address }}
+-Dquine.webserver-advertise.address={{ .Values.webserverAdvertise.address }}
+{{- end }}
+{{- if .Values.webserverAdvertise.port }}
+-Dquine.webserver-advertise.port={{ .Values.webserverAdvertise.port }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
 Store Config Section
 */}}
 {{- define "quine.storeConfiguration" -}}

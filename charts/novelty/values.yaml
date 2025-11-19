@@ -118,5 +118,10 @@ webserver:
   useTls: false
   useMTls: false
 
+webserverAdvertise:
+  enabled: false
+  address:
+  port:
+
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""

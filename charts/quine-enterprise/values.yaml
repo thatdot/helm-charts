@@ -26,6 +26,11 @@ webserver:
   useTls: false
   useMTls: false
 
+webserverAdvertise:
+  enabled: false
+  address:
+  port:
+
 # Cassandra Persistor Settings:
 # Set enabled to true in order to configure the cassandra persistor.
 # NOTE: For now the cassandra persistor is the only one supported by this

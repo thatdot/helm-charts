@@ -118,3 +118,17 @@ Webserver Config Section
 -Dthatdot.novelty.webserver.use-tls={{ .Values.webserver.useTls }}
 -Dthatdot.novelty.webserver.use-m-tls={{ .Values.webserver.useMTls }}
 {{- end }}
+
+{{/*
+Webserver Advertise Config Section
+*/}}
+{{- define "novelty.webserverAdvertiseConfiguration" -}}
+{{- if .Values.webserverAdvertise.enabled }}
+{{- if .Values.webserverAdvertise.address }}
+-Dthatdot.novelty.webserver-advertise.address={{ .Values.webserverAdvertise.address }}
+{{- end }}
+{{- if .Values.webserverAdvertise.port }}
+-Dthatdot.novelty.webserver-advertise.port={{ .Values.webserverAdvertise.port }}
+{{- end }}
+{{- end }}
+{{- end }}
