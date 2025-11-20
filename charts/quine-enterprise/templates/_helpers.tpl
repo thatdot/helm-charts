@@ -102,6 +102,10 @@ Webserver Config Section
 -Dquine.webserver.port={{ .Values.webserver.port }}
 -Dquine.webserver.use-tls={{ .Values.webserver.useTls }}
 -Dquine.webserver.use-mtls.enabled={{ .Values.webserver.useMTls.enabled }}
+{{- if and .Values.webserver.useMTls.trustStore .Values.webserver.useMTls.trustStore.path .Values.webserver.useMTls.trustStore.password }}
+-Dquine.webserver.use-mtls.trust-store.path={{ .Values.webserver.useMTls.trustStore.path }}
+-Dquine.webserver.use-mtls.trust-store.password={{ .Values.webserver.useMTls.trustStore.password }}
+{{- end }}
 {{- end }}
 
 {{/*

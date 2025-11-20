@@ -117,6 +117,10 @@ Webserver Config Section
 -Dthatdot.novelty.webserver.port={{ .Values.webserver.port }}
 -Dthatdot.novelty.webserver.use-tls={{ .Values.webserver.useTls }}
 -Dthatdot.novelty.webserver.use-mtls.enabled={{ .Values.webserver.useMTls.enabled }}
+{{- if and .Values.webserver.useMTls.trustStore .Values.webserver.useMTls.trustStore.path .Values.webserver.useMTls.trustStore.password }}
+-Dthatdot.novelty.webserver.use-mtls.trust-store.path={{ .Values.webserver.useMTls.trustStore.path }}
+-Dthatdot.novelty.webserver.use-mtls.trust-store.password={{ .Values.webserver.useMTls.trustStore.password }}
+{{- end }}
 {{- end }}
 
 {{/*

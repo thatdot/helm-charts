@@ -26,6 +26,9 @@ webserver:
   useTls: false
   useMTls:
     enabled: false
+    # trustStore:
+    #   path: ""
+    #   password: ""
     clientCertificateConfigMap: ""
 
 webserverAdvertise:
