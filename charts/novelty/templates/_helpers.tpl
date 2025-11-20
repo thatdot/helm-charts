@@ -121,6 +121,10 @@ Webserver Config Section
 -Dthatdot.novelty.webserver.use-mtls.trust-store.path={{ .Values.webserver.useMTls.trustStore.path }}
 -Dthatdot.novelty.webserver.use-mtls.trust-store.password={{ .Values.webserver.useMTls.trustStore.password }}
 {{- end }}
+{{- if .Values.webserver.useMTls.healthEndpoints }}
+-Dthatdot.novelty.webserver.use-mtls.health-endpoints.enabled={{ .Values.webserver.useMTls.healthEndpoints.enabled }}
+-Dthatdot.novelty.webserver.use-mtls.health-endpoints.port={{ .Values.webserver.useMTls.healthEndpoints.port }}
+{{- end }}
 {{- end }}
 
 {{/*

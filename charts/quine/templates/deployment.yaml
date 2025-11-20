@@ -61,22 +61,11 @@ spec:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-            {{- if .Values.webserver.useMTls.enabled }}
-            - name: tls-certificates
-              mountPath: /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}
-              readOnly: true
-            {{- end }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       volumes:
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- if .Values.webserver.useMTls.enabled }}
-        - name: tls-certificates
-          configMap:
-            name: {{ .Values.webserver.useMTls.clientCertificateConfigMap }}
-            defaultMode: 0444
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

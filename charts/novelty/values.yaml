@@ -118,7 +118,9 @@ webserver:
   useTls: false
   useMTls:
     enabled: false
-    clientCertificateConfigMap: ""
+    healthEndpoints:
+      enabled: false
+      port: 8081
     # trustStore:
     #   path: ""
     #   password: ""
@@ -129,19 +131,10 @@ webserverAdvertise:
   port:
 
 # mTLS Configuration
-# When webserver.useMTls.enabled is true, a ConfigMap containing client certificates must be specified.
-# The ConfigMap should contain three files in PEM format:
-# - ca.pem: CA certificate for verifying the server
-# - client.pem: Client certificate for mTLS authentication
-# - client-key.pem: Client private key for mTLS authentication
-#
-# Example ConfigMap creation:
-#   kubectl create configmap my-tls-certs \
-#     --from-file=ca.pem=path/to/ca.pem \
-#     --from-file=client.pem=path/to/client.pem \
-#     --from-file=client-key.pem=path/to/client-key.pem
-#
-# Then set: webserver.useMTls.clientCertificateConfigMap: my-tls-certs
+# When webserver.useMTls.enabled is true:
+# - If healthEndpoints.enabled is true, health probes will use HTTP on the loopback
+#   address with the configured healthEndpoints.port
+# - If healthEndpoints.enabled is false, health probes will be disabled
 
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""

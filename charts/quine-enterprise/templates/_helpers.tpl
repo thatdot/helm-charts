@@ -106,6 +106,10 @@ Webserver Config Section
 -Dquine.webserver.use-mtls.trust-store.path={{ .Values.webserver.useMTls.trustStore.path }}
 -Dquine.webserver.use-mtls.trust-store.password={{ .Values.webserver.useMTls.trustStore.password }}
 {{- end }}
+{{- if .Values.webserver.useMTls.healthEndpoints }}
+-Dquine.webserver.use-mtls.health-endpoints.enabled={{ .Values.webserver.useMTls.healthEndpoints.enabled }}
+-Dquine.webserver.use-mtls.health-endpoints.port={{ .Values.webserver.useMTls.healthEndpoints.port }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -172,25 +176,22 @@ Liveness and Readiness Probes
 */}}
 {{- define "quine-enterprise.probes" -}}
 {{- if .Values.webserver.useMTls.enabled }}
-{{- if not .Values.webserver.useMTls.clientCertificateConfigMap }}
-{{- fail "webserver.useMTls.enabled is true but clientCertificateConfigMap is not set" }}
-{{- end }}
+{{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
 livenessProbe:
-  exec:
-    command:
-      - /bin/sh
-      - -c
-      - curl --cacert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/ca.pem --cert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client.pem --key /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v2/admin/liveness
+  httpGet:
+    path: /api/v2/admin/liveness
+    port: {{ .Values.webserver.useMTls.healthEndpoints.port }}
+    host: 127.0.0.1
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
-  exec:
-    command:
-      - /bin/sh
-      - -c
-      - curl --cacert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/ca.pem --cert /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client.pem --key /certs/{{ .Values.webserver.useMTls.clientCertificateConfigMap }}/client-key.pem --silent -f -o /dev/null https://localhost:8080/api/v2/admin/liveness
+  httpGet:
+    path: /api/v2/admin/liveness
+    port: {{ .Values.webserver.useMTls.healthEndpoints.port }}
+    host: 127.0.0.1
   initialDelaySeconds: 5
   timeoutSeconds: 10
+{{- end }}
 {{- else }}
 livenessProbe:
   httpGet:
