@@ -73,16 +73,18 @@ spec:
           {{- if .Values.webserver.useMTls.enabled }}
           {{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
           livenessProbe:
-            httpGet:
-              path: /api/v2/admin/liveness
-              port: {{ .Values.webserver.useMTls.healthEndpoints.port }}
-              host: 127.0.0.1
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/admin/liveness
             initialDelaySeconds: 5
           readinessProbe:
-            httpGet:
-              path: /api/v2/admin/liveness
-              port: {{ .Values.webserver.useMTls.healthEndpoints.port }}
-              host: 127.0.0.1
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/admin/liveness
             initialDelaySeconds: 5
           {{- end }}
           {{- else }}

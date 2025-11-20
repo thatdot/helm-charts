@@ -157,17 +157,19 @@ Liveness and Readiness Probes
 {{- if .Values.webserver.useMTls.enabled }}
 {{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
 livenessProbe:
-  httpGet:
-    path: /api/v1/admin/liveness
-    port: {{ .Values.webserver.useMTls.healthEndpoints.port }}
-    host: 127.0.0.1
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v1/admin/liveness
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
-  httpGet:
-    path: /api/v1/admin/liveness
-    port: {{ .Values.webserver.useMTls.healthEndpoints.port }}
-    host: 127.0.0.1
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v1/admin/liveness
   initialDelaySeconds: 5
   timeoutSeconds: 10
 {{- end }}
