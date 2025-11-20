@@ -30,6 +30,8 @@ spec:
               {{ include "novelty.logLevelConfiguration" . | nindent 14 }}
               {{ include "novelty.oidcConfiguration" . | nindent 14 }}
               {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
+              {{ include "novelty.webserverConfiguration" . | nindent 14 }}
+              {{ include "novelty.webserverAdvertiseConfiguration" . | nindent 14 }}
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
               {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
@@ -68,16 +70,41 @@ spec:
                 key: {{ .Values.licenseKeySecret.key }}
           ports:
           - containerPort: {{ .Values.service.internalPort }}
+          {{- if .Values.webserver.useMTls.enabled }}
+          {{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/admin/liveness
+            initialDelaySeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/admin/liveness
+            initialDelaySeconds: 5
+          {{- end }}
+          {{- else }}
           livenessProbe:
             httpGet:
               path: /api/v2/admin/liveness
               port: 8080
+              {{- if .Values.webserver.useTls }}
+              scheme: HTTPS
+              {{- end }}
             initialDelaySeconds: 5
           readinessProbe:
             httpGet:
               path: /api/v2/admin/liveness
               port: 8080
+              {{- if .Values.webserver.useTls }}
+              scheme: HTTPS
+              {{- end }}
             initialDelaySeconds: 5
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}

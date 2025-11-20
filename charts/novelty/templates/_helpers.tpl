@@ -107,3 +107,36 @@ Log Level Configuration Section
 -Dthatdot.loglevel={{ .Values.thatdot.logLevel }}
 {{- end }}
 {{- end }}
+
+{{/*
+Webserver Config Section
+*/}}
+{{- define "novelty.webserverConfiguration" -}}
+-Dthatdot.novelty.webserver.enabled={{ .Values.webserver.enabled }}
+-Dthatdot.novelty.webserver.address={{ .Values.webserver.address }}
+-Dthatdot.novelty.webserver.port={{ .Values.webserver.port }}
+-Dthatdot.novelty.webserver.use-tls={{ .Values.webserver.useTls }}
+-Dthatdot.novelty.webserver.use-mtls.enabled={{ .Values.webserver.useMTls.enabled }}
+{{- if and .Values.webserver.useMTls.trustStore .Values.webserver.useMTls.trustStore.path .Values.webserver.useMTls.trustStore.password }}
+-Dthatdot.novelty.webserver.use-mtls.trust-store.path={{ .Values.webserver.useMTls.trustStore.path }}
+-Dthatdot.novelty.webserver.use-mtls.trust-store.password={{ .Values.webserver.useMTls.trustStore.password }}
+{{- end }}
+{{- if .Values.webserver.useMTls.healthEndpoints }}
+-Dthatdot.novelty.webserver.use-mtls.health-endpoints.enabled={{ .Values.webserver.useMTls.healthEndpoints.enabled }}
+-Dthatdot.novelty.webserver.use-mtls.health-endpoints.port={{ .Values.webserver.useMTls.healthEndpoints.port }}
+{{- end }}
+{{- end }}
+
+{{/*
+Webserver Advertise Config Section
+*/}}
+{{- define "novelty.webserverAdvertiseConfiguration" -}}
+{{- if .Values.webserverAdvertise.enabled }}
+{{- if .Values.webserverAdvertise.address }}
+-Dthatdot.novelty.webserver-advertise.address={{ .Values.webserverAdvertise.address }}
+{{- end }}
+{{- if .Values.webserverAdvertise.port }}
+-Dthatdot.novelty.webserver-advertise.port={{ .Values.webserverAdvertise.port }}
+{{- end }}
+{{- end }}
+{{- end }}

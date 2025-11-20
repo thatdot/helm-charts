@@ -73,6 +73,39 @@ Persistence Config Section
 {{- end }}
 
 {{/*
+Webserver Config Section
+*/}}
+{{- define "quine.webserverConfiguration" -}}
+-Dquine.webserver.enabled={{ .Values.webserver.enabled }}
+-Dquine.webserver.address={{ .Values.webserver.address }}
+-Dquine.webserver.port={{ .Values.webserver.port }}
+-Dquine.webserver.use-tls={{ .Values.webserver.useTls }}
+-Dquine.webserver.use-mtls.enabled={{ .Values.webserver.useMTls.enabled }}
+{{- if and .Values.webserver.useMTls.trustStore .Values.webserver.useMTls.trustStore.path .Values.webserver.useMTls.trustStore.password }}
+-Dquine.webserver.use-mtls.trust-store.path={{ .Values.webserver.useMTls.trustStore.path }}
+-Dquine.webserver.use-mtls.trust-store.password={{ .Values.webserver.useMTls.trustStore.password }}
+{{- end }}
+{{- if .Values.webserver.useMTls.healthEndpoints }}
+-Dquine.webserver.use-mtls.health-endpoints.enabled={{ .Values.webserver.useMTls.healthEndpoints.enabled }}
+-Dquine.webserver.use-mtls.health-endpoints.port={{ .Values.webserver.useMTls.healthEndpoints.port }}
+{{- end }}
+{{- end }}
+
+{{/*
+Webserver Advertise Config Section
+*/}}
+{{- define "quine.webserverAdvertiseConfiguration" -}}
+{{- if .Values.webserverAdvertise.enabled }}
+{{- if .Values.webserverAdvertise.address }}
+-Dquine.webserver-advertise.address={{ .Values.webserverAdvertise.address }}
+{{- end }}
+{{- if .Values.webserverAdvertise.port }}
+-Dquine.webserver-advertise.port={{ .Values.webserverAdvertise.port }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
 Store Config Section
 */}}
 {{- define "quine.storeConfiguration" -}}
@@ -121,18 +154,45 @@ Cassandra Auth Environment
 Liveness and Readiness Probes
 */}}
 {{- define "quine.probes" -}}
+{{- if .Values.webserver.useMTls.enabled }}
+{{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
+livenessProbe:
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v1/admin/liveness
+  initialDelaySeconds: 5
+  timeoutSeconds: 10
+readinessProbe:
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v1/admin/liveness
+  initialDelaySeconds: 5
+  timeoutSeconds: 10
+{{- end }}
+{{- else }}
 livenessProbe:
   httpGet:
     path: /api/v1/admin/liveness
     port: 8080
+    {{- if .Values.webserver.useTls }}
+    scheme: HTTPS
+    {{- end }}
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
   httpGet:
     path: /api/v1/admin/liveness
     port: 8080
+    {{- if .Values.webserver.useTls }}
+    scheme: HTTPS
+    {{- end }}
   initialDelaySeconds: 5
   timeoutSeconds: 10
+{{- end }}
 {{- end }}
 
 {{/*

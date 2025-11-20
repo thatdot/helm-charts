@@ -8,6 +8,31 @@ thatdot:
   # Possible values: ERROR, WARN, INFO, DEBUG
   logLevel: WARN
 
+webserver:
+  enabled: true
+  address: 0.0.0.0
+  port: 8080
+  useTls: false
+  useMTls:
+    enabled: false
+    healthEndpoints:
+      enabled: false
+      port: 8081
+    # trustStore:
+    #   path: ""
+    #   password: ""
+
+webserverAdvertise:
+  enabled: false
+  address:
+  port:
+
+# mTLS Configuration
+# When webserver.useMTls.enabled is true:
+# - If healthEndpoints.enabled is true, health probes will use HTTP on the loopback
+#   address with the configured healthEndpoints.port
+# - If healthEndpoints.enabled is false, health probes will be disabled
+
 # Cassandra Persistor Settings: Set enabled to true in order to configure the
 # cassandra persistor. 
 # NOTE: For now the cassandra persistor is the only external persistor
