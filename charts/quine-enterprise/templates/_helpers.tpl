@@ -101,7 +101,7 @@ Webserver Config Section
 -Dquine.webserver.address={{ .Values.webserver.address }}
 -Dquine.webserver.port={{ .Values.webserver.port }}
 -Dquine.webserver.use-tls={{ .Values.webserver.useTls }}
--Dquine.webserver.use-m-tls={{ .Values.webserver.useMTls.enabled }}
+-Dquine.webserver.use-mtls.enabled={{ .Values.webserver.useMTls.enabled }}
 {{- end }}
 
 {{/*
