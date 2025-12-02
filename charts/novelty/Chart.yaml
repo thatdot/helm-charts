@@ -3,4 +3,4 @@ name: novelty
 description: thatDot Novelty Detector Helm Chart
 
 version: 0.5.1
-appVersion: 1.0.0
+appVersion: 0.15.0
