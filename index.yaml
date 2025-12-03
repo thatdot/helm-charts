@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   novelty:
   - apiVersion: v2
+    appVersion: 0.15.0
+    created: "2025-12-03T17:39:58.075837444Z"
+    description: thatDot Novelty Detector Helm Chart
+    digest: 9c0713f50df8770d0dbfdf3f6674c4897846a728d89a85ee153251fb37d945c0
+    name: novelty
+    urls:
+    - https://github.com/thatdot/helm-charts/releases/download/novelty-0.5.2/novelty-0.5.2.tgz
+    version: 0.5.2
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2025-11-20T20:51:13.335958774Z"
     description: thatDot Novelty Detector Helm Chart
@@ -84,6 +93,16 @@ entries:
     version: 0.2.0
   quine:
   - apiVersion: v2
+    appVersion: 1.10.0
+    created: "2025-12-03T17:39:58.244344749Z"
+    description: A Helm chart for creating a thatDot Quine instance
+    digest: 7c4a556d7743014e1e14fc03a2bd2097cf40fb15e6cd7ddf32da4de37394462b
+    name: quine
+    type: application
+    urls:
+    - https://github.com/thatdot/helm-charts/releases/download/quine-0.5.2/quine-0.5.2.tgz
+    version: 0.5.2
+  - apiVersion: v2
     appVersion: 2.0.0
     created: "2025-11-20T20:51:13.564527665Z"
     description: A Helm chart for creating a thatDot Quine instance
@@ -134,6 +153,16 @@ entries:
     - https://github.com/thatdot/helm-charts/releases/download/quine-0.4.7/quine-0.4.7.tgz
     version: 0.4.7
   quine-enterprise:
+  - apiVersion: v2
+    appVersion: 1.10.0
+    created: "2025-12-03T17:39:58.581519097Z"
+    description: A Helm chart for creating a thatDot Quine Enterprise cluster
+    digest: 47daf459ea1b7a59ba540f8407e7f0028043ed61bb82af09f02a1b787808429e
+    name: quine-enterprise
+    type: application
+    urls:
+    - https://github.com/thatdot/helm-charts/releases/download/quine-enterprise-0.5.2/quine-enterprise-0.5.2.tgz
+    version: 0.5.2
   - apiVersion: v2
     appVersion: 2.0.0
     created: "2025-11-20T20:51:13.741978438Z"
@@ -284,4 +313,4 @@ entries:
     urls:
     - https://github.com/thatdot/helm-charts/releases/download/quine-enterprise-0.2.0/quine-enterprise-0.2.0.tgz
     version: 0.2.0
-generated: "2025-11-20T20:51:13.742138577Z"
+generated: "2025-12-03T17:39:58.58177425Z"
