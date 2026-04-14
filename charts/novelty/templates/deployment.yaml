@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "novelty.fullname" . }}
-  labels: 
+  labels:
     {{- include "novelty.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -19,6 +19,10 @@ spec:
       labels:
         {{- include "novelty.labels" . | nindent 8 }}
     spec:
+      {{- if and .Values.keycloak .Values.keycloak.bundled }}
+      initContainers:
+        {{- include "thatdot-common.truststoreInitContainer" . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -34,34 +38,9 @@ spec:
               {{ include "novelty.webserverAdvertiseConfiguration" . | nindent 14 }}
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
               {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
+              {{ include "thatdot-common.truststoreJdkArgs" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
-          {{- if and .Values.oidc.enabled .Values.oidc.client.existingSecret.name }}
-          - name: CONFIG_FORCE_thatdot_novelty_auth_oidc_full_client_id
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.oidc.client.existingSecret.name }}
-                key: {{ .Values.oidc.client.existingSecret.secretKeys.clientIdKey }}
-          - name: CONFIG_FORCE_thatdot_novelty_auth_oidc_full_client_secret
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.oidc.client.existingSecret.name }}
-                key: {{ .Values.oidc.client.existingSecret.secretKeys.clientSecretKey }}
-          {{- end }}
-          {{- if .Values.oidc.enabled }}
-          {{- if .Values.oidc.session.autoGenerate }}
-          - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "novelty.fullname" . }}-session-secret
-                key: secret
-          {{- else if .Values.oidc.session.existingSecret.name }}
-          - name: CONFIG_FORCE_thatdot_novelty_auth_session_secret
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.oidc.session.existingSecret.name }}
-                key: {{ .Values.oidc.session.existingSecret.key }}
-          {{- end }}
-          {{- end }}
+          {{ include "thatdot-common.oidcEnvVars" (dict "root" . "envPrefix" "thatdot_novelty_auth" "fullname" (include "novelty.fullname" .)) | nindent 10 }}
           {{ include "novelty.licenseKeyValidation" . }}
           - name: CONFIG_FORCE_thatdot_novelty_license__key
             valueFrom:
@@ -107,11 +86,13 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            {{- include "thatdot-common.truststoreVolumeMounts" . | nindent 12 }}
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
       volumes:
+        {{- include "thatdot-common.truststoreVolumes" . | nindent 8 }}
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}

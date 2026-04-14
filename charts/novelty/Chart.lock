@@ -1,0 +1,9 @@
+dependencies:
+- name: thatdot-common
+  repository: file://../thatdot-common
+  version: 0.1.0
+- name: keycloak
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 25.2.0
+digest: sha256:032158c0d69c15ccce17a1788dd50453cce25d9035ecceb235d50563bb499453
+generated: "2026-04-14T10:06:37.546575-04:00"

@@ -1,0 +1,9 @@
+dependencies:
+- name: thatdot-common
+  repository: file://../thatdot-common
+  version: 0.1.0
+- name: cassandra
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 11.4.2
+digest: sha256:bff6b63b5469ae112745bbca02e070a80bb88aca0ad2f5517eb4ca8f11331a6e
+generated: "2026-04-14T10:06:42.069261-04:00"

@@ -1,0 +1,17 @@
+Quine has been installed.
+
+{{- if and .Values.cassandra .Values.cassandra.bundled }}
+
+=== Bundled Cassandra Setup ===
+
+A Cassandra instance has been deployed alongside Quine for persistence.
+
+1. Port-forward the service:
+
+   kubectl port-forward svc/{{ include "quine.fullname" . }} 8080:{{ .Values.service.port }} &
+
+2. Access Quine at: http://localhost:8080
+
+   NOTE: Bundled Cassandra is for eval/dev only. Use an external cluster for production.
+
+{{- end }}

@@ -1,0 +1,40 @@
+Quine Enterprise has been installed.
+
+{{- if and .Values.keycloak .Values.keycloak.bundled }}
+
+=== Bundled Keycloak Setup ===
+
+1. Add the following to your /etc/hosts file:
+
+   127.0.0.1 {{ .Release.Name }}-keycloak
+   ::1       {{ .Release.Name }}-keycloak
+
+2. Access Quine Enterprise at: http://localhost:{{ .Values.service.port }}
+   Keycloak admin console: https://{{ .Release.Name }}-keycloak:8443
+   Admin credentials: admin / admin
+
+3. Test user credentials (browser login):
+
+   | Username        | Password         | Role         |
+   |-----------------|------------------|--------------|
+   | superadmin1     | superadmin123    | SuperAdmin   |
+   | admin1          | admin123         | Admin        |
+   | architect1      | architect123     | Architect    |
+   | dataengineer1   | dataengineer123  | DataEngineer |
+   | analyst1        | analyst123       | Analyst      |
+   | billing1        | billing123       | Billing      |
+
+4. CLI service account clients (client-credentials grant):
+
+   | Client ID            | Secret                               |
+   |----------------------|--------------------------------------|
+   | qe-cli-superadmin    | 1csu4f04hmPS6tX_-aplQnOh7NHi9ipw    |
+   | qe-cli-admin         | Xfu4RpRLPJkijvDe8rY_ZugCAANnroKI    |
+   | qe-cli-architect     | PsU4n2HqYrlnwWoAT5YR15DVb4zRj13O    |
+   | qe-cli-dataengineer  | e3ejEwQ-ozTsW8LNlnqYxXpSGz1Eawy3    |
+   | qe-cli-analyst       | xHmrwq_7C8IiSsLx2ohxx6gF-0o3ehvz    |
+   | qe-cli-billing       | qBIyC3uJHg10Apg8kkyNm3MEO4XTdMpn    |
+
+   NOTE: These credentials are for eval/dev only. Do not use in production.
+
+{{- end }}

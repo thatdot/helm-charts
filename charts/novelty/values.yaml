@@ -138,3 +138,343 @@ webserverAdvertise:
 
 # Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""
+
+# Use these values to attach mount volumes to the Novelty container
+volumes: []
+volumeMounts: []
+
+# ============================================================================
+# Bundled Subchart Defaults (eval/dev only)
+# These values configure the optional bundled Keycloak subchart.
+# They only take effect when keycloak.bundled is true.
+# For production, use an external Keycloak or OIDC provider instead.
+# ============================================================================
+
+# Bundled Keycloak + PostgreSQL configuration (subchart: keycloak)
+# Set keycloak.bundled to true to deploy. This implies oidc.enabled.
+keycloak:
+  bundled: false
+  global:
+    security:
+      allowInsecureImages: true
+  auth:
+    adminUser: admin
+    adminPassword: admin
+  service:
+    type: LoadBalancer
+    ports:
+      https: 8443
+  tls:
+    enabled: true
+  postgresql:
+    enabled: true
+    auth:
+      username: bn_keycloak
+      password: bn_keycloak
+      database: bitnami_keycloak
+  keycloakConfigCli:
+    enabled: true
+    configuration:
+      realm.json: |
+        {
+          "id": "novelty",
+          "realm": "novelty",
+          "displayName": "Novelty",
+          "enabled": true,
+          "loginTheme": "keycloak",
+          "accountTheme": "keycloak",
+          "adminTheme": "keycloak",
+          "emailTheme": "keycloak",
+          "accessTokenLifespan": 1800,
+          "accessTokenLifespanForImplicitFlow": 900,
+          "ssoSessionIdleTimeout": 1800,
+          "ssoSessionMaxLifespan": 36000,
+          "offlineSessionIdleTimeout": 2592000,
+          "clients": [
+            {
+              "clientId": "novelty-client",
+              "name": "Novelty Client",
+              "description": "OAuth client for Novelty API v2 authentication",
+              "enabled": true,
+              "clientAuthenticatorType": "client-secret",
+              "secret": "bundled-eval-only-secret",
+              "redirectUris": [
+                "http://localhost:8081/api/v2/auth/callback",
+                "http://localhost:8081/*"
+              ],
+              "webOrigins": ["http://localhost:8081", "https://localhost:8081"],
+              "standardFlowEnabled": true,
+              "implicitFlowEnabled": false,
+              "directAccessGrantsEnabled": true,
+              "serviceAccountsEnabled": false,
+              "publicClient": false,
+              "protocol": "openid-connect",
+              "protocolMappers": [
+                {
+                  "name": "roles",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-client-role-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "claim.name": "roles",
+                    "jsonType.label": "String",
+                    "multivalued": "true",
+                    "userinfo.token.claim": "true",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true",
+                    "usermodel.clientRoleMapping.clientId": "novelty-client"
+                  }
+                }
+              ],
+              "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "basic", "email"],
+              "optionalClientScopes": ["address", "phone", "offline_access", "microprofile-jwt"]
+            },
+            {
+              "clientId": "novelty-cli-superadmin",
+              "name": "Novelty CLI (SuperAdmin)",
+              "enabled": true,
+              "protocol": "openid-connect",
+              "publicClient": false,
+              "clientAuthenticatorType": "client-secret",
+              "secret": "1csu4f04hmPS6tX_-aplQnOh7NHi9ipw",
+              "standardFlowEnabled": false,
+              "implicitFlowEnabled": false,
+              "directAccessGrantsEnabled": false,
+              "serviceAccountsEnabled": true,
+              "redirectUris": [],
+              "webOrigins": [],
+              "defaultClientScopes": ["roles", "profile", "email", "web-origins", "acr", "basic"],
+              "optionalClientScopes": [],
+              "protocolMappers": [
+                {
+                  "name": "audience: novelty-client",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-audience-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "included.client.audience": "novelty-client",
+                    "id.token.claim": "false",
+                    "access.token.claim": "true"
+                  }
+                }
+              ]
+            },
+            {
+              "clientId": "novelty-cli-admin",
+              "name": "Novelty CLI (Admin)",
+              "enabled": true,
+              "protocol": "openid-connect",
+              "publicClient": false,
+              "clientAuthenticatorType": "client-secret",
+              "secret": "Xfu4RpRLPJkijvDe8rY_ZugCAANnroKI",
+              "standardFlowEnabled": false,
+              "implicitFlowEnabled": false,
+              "directAccessGrantsEnabled": false,
+              "serviceAccountsEnabled": true,
+              "redirectUris": [],
+              "webOrigins": [],
+              "defaultClientScopes": ["roles", "profile", "email", "web-origins", "acr", "basic"],
+              "optionalClientScopes": [],
+              "protocolMappers": [
+                {
+                  "name": "audience: novelty-client",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-audience-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "included.client.audience": "novelty-client",
+                    "id.token.claim": "false",
+                    "access.token.claim": "true"
+                  }
+                }
+              ]
+            },
+            {
+              "clientId": "novelty-cli-architect",
+              "name": "Novelty CLI (Architect)",
+              "enabled": true,
+              "protocol": "openid-connect",
+              "publicClient": false,
+              "clientAuthenticatorType": "client-secret",
+              "secret": "PsU4n2HqYrlnwWoAT5YR15DVb4zRj13O",
+              "standardFlowEnabled": false,
+              "implicitFlowEnabled": false,
+              "directAccessGrantsEnabled": false,
+              "serviceAccountsEnabled": true,
+              "redirectUris": [],
+              "webOrigins": [],
+              "defaultClientScopes": ["roles", "profile", "email", "web-origins", "acr", "basic"],
+              "optionalClientScopes": [],
+              "protocolMappers": [
+                {
+                  "name": "audience: novelty-client",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-audience-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "included.client.audience": "novelty-client",
+                    "id.token.claim": "false",
+                    "access.token.claim": "true"
+                  }
+                }
+              ]
+            },
+            {
+              "clientId": "novelty-cli-dataengineer",
+              "name": "Novelty CLI (DataEngineer)",
+              "enabled": true,
+              "protocol": "openid-connect",
+              "publicClient": false,
+              "clientAuthenticatorType": "client-secret",
+              "secret": "e3ejEwQ-ozTsW8LNlnqYxXpSGz1Eawy3",
+              "standardFlowEnabled": false,
+              "implicitFlowEnabled": false,
+              "directAccessGrantsEnabled": false,
+              "serviceAccountsEnabled": true,
+              "redirectUris": [],
+              "webOrigins": [],
+              "defaultClientScopes": ["roles", "profile", "email", "web-origins", "acr", "basic"],
+              "optionalClientScopes": [],
+              "protocolMappers": [
+                {
+                  "name": "audience: novelty-client",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-audience-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "included.client.audience": "novelty-client",
+                    "id.token.claim": "false",
+                    "access.token.claim": "true"
+                  }
+                }
+              ]
+            },
+            {
+              "clientId": "novelty-cli-analyst",
+              "name": "Novelty CLI (Analyst)",
+              "enabled": true,
+              "protocol": "openid-connect",
+              "publicClient": false,
+              "clientAuthenticatorType": "client-secret",
+              "secret": "xHmrwq_7C8IiSsLx2ohxx6gF-0o3ehvz",
+              "standardFlowEnabled": false,
+              "implicitFlowEnabled": false,
+              "directAccessGrantsEnabled": false,
+              "serviceAccountsEnabled": true,
+              "redirectUris": [],
+              "webOrigins": [],
+              "defaultClientScopes": ["roles", "profile", "email", "web-origins", "acr", "basic"],
+              "optionalClientScopes": [],
+              "protocolMappers": [
+                {
+                  "name": "audience: novelty-client",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-audience-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "included.client.audience": "novelty-client",
+                    "id.token.claim": "false",
+                    "access.token.claim": "true"
+                  }
+                }
+              ]
+            },
+            {
+              "clientId": "novelty-cli-billing",
+              "name": "Novelty CLI (Billing)",
+              "enabled": true,
+              "protocol": "openid-connect",
+              "publicClient": false,
+              "clientAuthenticatorType": "client-secret",
+              "secret": "qBIyC3uJHg10Apg8kkyNm3MEO4XTdMpn",
+              "standardFlowEnabled": false,
+              "implicitFlowEnabled": false,
+              "directAccessGrantsEnabled": false,
+              "serviceAccountsEnabled": true,
+              "redirectUris": [],
+              "webOrigins": [],
+              "defaultClientScopes": ["roles", "profile", "email", "web-origins", "acr", "basic"],
+              "optionalClientScopes": [],
+              "protocolMappers": [
+                {
+                  "name": "audience: novelty-client",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-audience-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "included.client.audience": "novelty-client",
+                    "id.token.claim": "false",
+                    "access.token.claim": "true"
+                  }
+                }
+              ]
+            }
+          ],
+          "roles": {
+            "client": {
+              "novelty-client": [
+                {"name": "Admin", "description": "Administrator role with full system administration access"},
+                {"name": "Analyst", "description": "Data Analyst role with read-only access to data and metrics"},
+                {"name": "Architect", "description": "System Architect role with configuration and design access"},
+                {"name": "Billing", "description": "Billing role with access to usage and license information"},
+                {"name": "DataEngineer", "description": "Data Engineer role with read/write access to data and ingests"},
+                {"name": "SuperAdmin", "description": "Super Administrator role with omnipotent access to all system features"}
+              ]
+            }
+          },
+          "users": [
+            {"username": "superadmin1", "enabled": true, "firstName": "Test", "lastName": "SuperAdmin", "email": "superadmin1@example.com", "credentials": [{"type": "password", "value": "superadmin123", "temporary": false}], "clientRoles": {"novelty-client": ["SuperAdmin"]}},
+            {"username": "admin1", "enabled": true, "firstName": "Test", "lastName": "Administrator", "email": "admin1@example.com", "credentials": [{"type": "password", "value": "admin123", "temporary": false}], "clientRoles": {"novelty-client": ["Admin"]}},
+            {"username": "architect1", "enabled": true, "firstName": "Test", "lastName": "Architect", "email": "architect1@example.com", "credentials": [{"type": "password", "value": "architect123", "temporary": false}], "clientRoles": {"novelty-client": ["Architect"]}},
+            {"username": "dataengineer1", "enabled": true, "firstName": "Test", "lastName": "DataEngineer", "email": "dataengineer1@example.com", "credentials": [{"type": "password", "value": "dataengineer123", "temporary": false}], "clientRoles": {"novelty-client": ["DataEngineer"]}},
+            {"username": "analyst1", "enabled": true, "firstName": "Test", "lastName": "Analyst", "email": "analyst1@example.com", "credentials": [{"type": "password", "value": "analyst123", "temporary": false}], "clientRoles": {"novelty-client": ["Analyst"]}},
+            {"username": "billing1", "enabled": true, "firstName": "Test", "lastName": "Billing", "email": "billing1@example.com", "credentials": [{"type": "password", "value": "billing123", "temporary": false}], "clientRoles": {"novelty-client": ["Billing"]}},
+            {"username": "service-account-novelty-cli-superadmin", "serviceAccountClientId": "novelty-cli-superadmin", "enabled": true, "clientRoles": {"novelty-client": ["SuperAdmin"]}},
+            {"username": "service-account-novelty-cli-admin", "serviceAccountClientId": "novelty-cli-admin", "enabled": true, "clientRoles": {"novelty-client": ["Admin"]}},
+            {"username": "service-account-novelty-cli-architect", "serviceAccountClientId": "novelty-cli-architect", "enabled": true, "clientRoles": {"novelty-client": ["Architect"]}},
+            {"username": "service-account-novelty-cli-dataengineer", "serviceAccountClientId": "novelty-cli-dataengineer", "enabled": true, "clientRoles": {"novelty-client": ["DataEngineer"]}},
+            {"username": "service-account-novelty-cli-analyst", "serviceAccountClientId": "novelty-cli-analyst", "enabled": true, "clientRoles": {"novelty-client": ["Analyst"]}},
+            {"username": "service-account-novelty-cli-billing", "serviceAccountClientId": "novelty-cli-billing", "enabled": true, "clientRoles": {"novelty-client": ["Billing"]}}
+          ],
+          "clientScopes": [
+            {
+              "name": "roles",
+              "description": "OpenID Connect scope for add user roles to the access token",
+              "protocol": "openid-connect",
+              "attributes": {"consent.screen.text": "${rolesScopeConsentText}", "display.on.consent.screen": "true", "include.in.token.scope": "false"},
+              "protocolMappers": [
+                {"name": "client roles", "protocol": "openid-connect", "protocolMapper": "oidc-usermodel-client-role-mapper", "consentRequired": false, "config": {"claim.name": "roles", "jsonType.label": "String", "multivalued": "true", "userinfo.token.claim": "true", "id.token.claim": "true", "access.token.claim": "true"}},
+                {"name": "audience resolve", "protocol": "openid-connect", "protocolMapper": "oidc-audience-resolve-mapper", "consentRequired": false, "config": {"introspection.token.claim": "true", "access.token.claim": "true"}}
+              ]
+            },
+            {
+              "name": "basic",
+              "description": "OpenID Connect scope for add all basic claims to the token",
+              "protocol": "openid-connect",
+              "attributes": {"include.in.token.scope": "false", "display.on.consent.screen": "false"},
+              "protocolMappers": [
+                {"name": "sub", "protocol": "openid-connect", "protocolMapper": "oidc-sub-mapper", "consentRequired": false, "config": {"introspection.token.claim": "true", "access.token.claim": "true"}},
+                {"name": "auth_time", "protocol": "openid-connect", "protocolMapper": "oidc-usersessionmodel-note-mapper", "consentRequired": false, "config": {"user.session.note": "AUTH_TIME", "id.token.claim": "true", "introspection.token.claim": "true", "access.token.claim": "true", "claim.name": "auth_time", "jsonType.label": "long"}}
+              ]
+            },
+            {
+              "name": "web-origins",
+              "description": "OpenID Connect scope for add allowed web origins to the access token",
+              "protocol": "openid-connect",
+              "attributes": {"include.in.token.scope": "false", "consent.screen.text": "", "display.on.consent.screen": "false"},
+              "protocolMappers": [
+                {"name": "allowed web origins", "protocol": "openid-connect", "protocolMapper": "oidc-allowed-origins-mapper", "consentRequired": false, "config": {"introspection.token.claim": "true", "access.token.claim": "true"}}
+              ]
+            },
+            {
+              "name": "acr",
+              "description": "OpenID Connect scope for add acr (authentication context class reference) to the token",
+              "protocol": "openid-connect",
+              "attributes": {"include.in.token.scope": "false", "display.on.consent.screen": "false"},
+              "protocolMappers": [
+                {"name": "acr loa level", "protocol": "openid-connect", "protocolMapper": "oidc-acr-mapper", "consentRequired": false, "config": {"id.token.claim": "true", "introspection.token.claim": "true", "access.token.claim": "true"}}
+              ]
+            }
+          ],
+          "defaultDefaultClientScopes": ["profile", "email", "roles", "web-origins", "acr", "basic"]
+        }

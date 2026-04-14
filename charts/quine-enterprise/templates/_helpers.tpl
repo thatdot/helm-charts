@@ -130,7 +130,7 @@ Webserver Advertise Config Section
 Store Config Section
 */}}
 {{- define "quine-enterprise.storeConfiguration" -}}
-{{- if .Values.cassandra.enabled }}
+{{- if or .Values.cassandra.enabled .Values.cassandra.bundled }}
 
 -Dquine.store.type=cassandra
 -Dquine.store.keyspace={{ .Values.cassandra.keyspace }}
@@ -149,26 +149,10 @@ Store Config Section
 {{- end }}
 
 {{/*
-Cassandra Auth Environment
+Cassandra Auth Environment (delegates to thatdot-common library)
 */}}
 {{- define "quine-enterprise.cassandraAuthEnv" -}}
-{{- if .Values.cassandra.plaintextAuth.enabled }}
-- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_class
-  value: PlainTextAuthProvider
-- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_username
-  value: {{ .Values.cassandra.plaintextAuth.username }}
-- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_password
-{{- if .Values.cassandra.plaintextAuth.passwordExistingSecret }}
-  valueFrom:
-    secretKeyRef:
-      name: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, name must be set"
-               .Values.cassandra.plaintextAuth.passwordExistingSecret.name }}
-      key: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, key must be set" 
-              .Values.cassandra.plaintextAuth.passwordExistingSecret.key }}
-{{- else }}
-  value: {{ .Values.cassandra.plaintextAuth.password }}
-{{- end }}
-{{- end }}
+{{ include "thatdot-common.cassandraAuthEnv" . }}
 {{- end }}
 
 {{/*
@@ -243,39 +227,10 @@ License Key Secret Validation Section
 {{- end }}
 
 {{/*
-OIDC Configuration Section
+OIDC Configuration Section (delegates to thatdot-common library)
 */}}
 {{- define "quine-enterprise.oidcConfiguration" -}}
-{{- if .Values.oidc.enabled }}
-{{- if not .Values.oidc.provider.locationUrl }}
-{{- fail "oidc.provider.locationUrl is required when oidc.enabled is true" }}
-{{- end }}
-{{- if not .Values.oidc.provider.authorizationUrl }}
-{{- fail "oidc.provider.authorizationUrl is required when oidc.enabled is true" }}
-{{- end }}
-{{- if not .Values.oidc.provider.tokenUrl }}
-{{- fail "oidc.provider.tokenUrl is required when oidc.enabled is true" }}
-{{- end }}
-{{- if not .Values.oidc.provider.loginPath }}
-{{- fail "oidc.provider.loginPath is required when oidc.enabled is true" }}
-{{- end }}
-{{- if not .Values.oidc.client.existingSecret.name }}
-{{- fail "oidc.client.existingSecret.name is required when oidc.enabled is true" }}
-{{- end }}
-{{- if not .Values.oidc.session.autoGenerate }}
-{{- if not .Values.oidc.session.existingSecret.name }}
-{{- fail "oidc.session.existingSecret.name is required when oidc.enabled is true and autoGenerate is false" }}
-{{- end }}
-{{- if not .Values.oidc.session.existingSecret.key }}
-{{- fail "oidc.session.existingSecret.key is required when oidc.enabled is true and autoGenerate is false" }}
-{{- end }}
-{{- end }}
--Dquine.auth.oidc.full.provider.location-url="{{ .Values.oidc.provider.locationUrl }}"
--Dquine.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
--Dquine.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
--Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
--Dquine.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
--Dquine.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
-{{- end }}
+{{ include "thatdot-common.oidcValidation" . }}
+{{ include "thatdot-common.oidcJdkArgs" (dict "root" . "jvmPrefix" "quine.auth" "realmName" "quine-enterprise") }}
 {{- end }}
 

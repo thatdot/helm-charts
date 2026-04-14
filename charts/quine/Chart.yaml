@@ -3,6 +3,16 @@ name: quine
 description: A Helm chart for creating a thatDot Quine instance
 type: application
 
-version: 0.5.2
+version: 0.5.3
 
 appVersion: "1.10.0"
+
+dependencies:
+  - name: thatdot-common
+    version: "~0.1"
+    repository: "file://../thatdot-common"
+  - name: cassandra
+    alias: cassandra-db
+    version: "~11"
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: cassandra.bundled

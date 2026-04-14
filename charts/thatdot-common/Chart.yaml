@@ -1,0 +1,5 @@
+apiVersion: v2
+name: thatdot-common
+type: library
+version: 0.1.0
+description: Shared helpers for thatDot product charts

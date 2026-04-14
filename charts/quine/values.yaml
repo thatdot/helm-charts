@@ -34,12 +34,17 @@ webserverAdvertise:
 # - If healthEndpoints.enabled is false, health probes will be disabled
 
 # Cassandra Persistor Settings: Set enabled to true in order to configure the
-# cassandra persistor. 
+# cassandra persistor.
 # NOTE: For now the cassandra persistor is the only external persistor
 # supported by this helm chart. If enabled is set to false, an internal RocksDB
 # persistor will be used. Such a configuration can be used for debug and
 # development purposes, but is not recommended for production.
 cassandra:
+  # Set to true to deploy a bundled Cassandra instance (eval/dev only).
+  # When true, the cassandra-db subchart is installed, endpoints are auto-wired,
+  # and the cassandra persistor is automatically enabled.
+  bundled: false
+
   enabled: false
 
   plaintextAuth:
@@ -180,3 +185,20 @@ extraJdkArgs: ""
 
 # Uncomment to override service account
 # serviceAccountName: ""
+
+# ============================================================================
+# Bundled Subchart Defaults (eval/dev only)
+# These values configure the optional bundled Cassandra subchart.
+# They only take effect when cassandra.bundled is true.
+# For production, use an external Cassandra cluster instead.
+# ============================================================================
+
+# Bundled Cassandra instance configuration (subchart: cassandra-db)
+cassandra-db:
+  global:
+    security:
+      allowInsecureImages: true
+  dbUser:
+    password: cassandra
+  service:
+    type: LoadBalancer

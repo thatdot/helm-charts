@@ -2,5 +2,14 @@ apiVersion: v2
 name: novelty
 description: thatDot Novelty Detector Helm Chart
 
-version: 0.5.2
+version: 0.5.3
 appVersion: 0.15.0
+
+dependencies:
+  - name: thatdot-common
+    version: "~0.1"
+    repository: "file://../thatdot-common"
+  - name: keycloak
+    version: "~25"
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: keycloak.bundled

@@ -40,7 +40,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: CASSANDRA_ENDPOINTS
-            value: {{ .Values.cassandra.endpoints }}
+            value: {{ include "thatdot-common.cassandraEndpoints" . }}
           - name: JDK_JAVA_OPTIONS 
             value: |
               -Dconfig.override_with_env_vars=true

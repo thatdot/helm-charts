@@ -109,7 +109,7 @@ Webserver Advertise Config Section
 Store Config Section
 */}}
 {{- define "quine.storeConfiguration" -}}
-{{- if .Values.cassandra.enabled }}
+{{- if or .Values.cassandra.enabled .Values.cassandra.bundled }}
 
 -Dquine.store.type=cassandra
 -Dquine.store.keyspace={{ .Values.cassandra.keyspace }}
@@ -128,26 +128,10 @@ Store Config Section
 {{- end }}
 
 {{/*
-Cassandra Auth Environment
+Cassandra Auth Environment (delegates to thatdot-common library)
 */}}
 {{- define "quine.cassandraAuthEnv" -}}
-{{- if .Values.cassandra.plaintextAuth.enabled }}
-- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_class
-  value: PlainTextAuthProvider
-- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_username
-  value: {{ .Values.cassandra.plaintextAuth.username }}
-- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_password
-{{- if .Values.cassandra.plaintextAuth.passwordExistingSecret }}
-  valueFrom:
-    secretKeyRef:
-      name: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, name must be set"
-               .Values.cassandra.plaintextAuth.passwordExistingSecret.name }}
-      key: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, key must be set" 
-              .Values.cassandra.plaintextAuth.passwordExistingSecret.key }}
-{{- else }}
-  value: {{ .Values.cassandra.plaintextAuth.password }}
-{{- end }}
-{{- end }}
+{{ include "thatdot-common.cassandraAuthEnv" . }}
 {{- end }}
 
 {{/*
