@@ -34,6 +34,7 @@ spec:
       serviceAccountName: {{ .Values.serviceAccountName }}
       {{- if and .Values.keycloak .Values.keycloak.bundled }}
       initContainers:
+        {{- include "thatdot-common.waitForKeycloakInitContainer" (dict "root" . "realmName" "quine-enterprise") | nindent 8 }}
         {{- include "thatdot-common.truststoreInitContainer" . | nindent 8 }}
       {{- end }}
       containers:

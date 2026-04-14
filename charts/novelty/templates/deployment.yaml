@@ -21,6 +21,7 @@ spec:
     spec:
       {{- if and .Values.keycloak .Values.keycloak.bundled }}
       initContainers:
+        {{- include "thatdot-common.waitForKeycloakInitContainer" (dict "root" . "realmName" "novelty") | nindent 8 }}
         {{- include "thatdot-common.truststoreInitContainer" . | nindent 8 }}
       {{- end }}
       containers:

@@ -1,4 +1,34 @@
 {{/*
+Wait-for-keycloak init container. Polls the realm's OIDC discovery endpoint until it returns 200,
+which means Keycloak is running AND the realm has been imported by keycloakConfigCli.
+Only used when keycloak.bundled is true.
+
+Usage: {{ include "thatdot-common.waitForKeycloakInitContainer" (dict "root" . "realmName" "novelty") | nindent 8 }}
+
+Parameters:
+  root      - root context (.)
+  realmName - Keycloak realm name to wait for
+*/}}
+{{- define "thatdot-common.waitForKeycloakInitContainer" -}}
+{{- $root := .root }}
+{{- $realmName := .realmName }}
+{{- if and $root.Values.keycloak $root.Values.keycloak.bundled }}
+- name: wait-for-keycloak
+  image: busybox:1.36
+  command: ['sh', '-c']
+  args:
+    - |
+      echo "Waiting for Keycloak realm '{{ $realmName }}' to be ready..."
+      until wget -q --spider --no-check-certificate \
+        "https://{{ $root.Release.Name }}-keycloak:8443/realms/{{ $realmName }}/.well-known/openid-configuration" 2>/dev/null; do
+        echo "Keycloak not ready yet, retrying in 5s..."
+        sleep 5
+      done
+      echo "Keycloak realm '{{ $realmName }}' is ready!"
+{{- end }}
+{{- end }}
+
+{{/*
 Truststore init container. Builds a Java truststore containing the bundled Keycloak's self-signed TLS cert.
 Only used when keycloak.bundled is true.
 
