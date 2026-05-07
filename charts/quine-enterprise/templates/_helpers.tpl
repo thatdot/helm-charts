@@ -182,7 +182,7 @@ livenessProbe:
     command:
       - /bin/sh
       - -c
-      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/admin/liveness
+      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
@@ -190,14 +190,14 @@ readinessProbe:
     command:
       - /bin/sh
       - -c
-      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/admin/liveness
+      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
   initialDelaySeconds: 5
   timeoutSeconds: 10
 {{- end }}
 {{- else }}
 livenessProbe:
   httpGet:
-    path: /api/v2/admin/liveness
+    path: /api/v2/system/liveness
     port: 8080
     {{- if .Values.webserver.useTls }}
     scheme: HTTPS
@@ -206,7 +206,7 @@ livenessProbe:
   timeoutSeconds: 10
 readinessProbe:
   httpGet:
-    path: /api/v2/admin/liveness
+    path: /api/v2/system/liveness
     port: 8080
     {{- if .Values.webserver.useTls }}
     scheme: HTTPS
