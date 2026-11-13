@@ -24,6 +24,11 @@ Grafana.
 * Storage driver
   * For EKS, [ebs-csi-driver](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html) addon is recommended
 
+**Note:** earlier versions of this example installed the Bitnami Cassandra
+chart, which is not compatible with the Cassandra installed now. Run
+`./uninstall.sh` to remove an earlier installation, including its data, before
+installing this one.
+
 ### Usage
 
 Create the namespace "thatdot-example", and in it the secrets holding the

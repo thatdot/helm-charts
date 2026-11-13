@@ -137,6 +137,21 @@ When cassandra is disabled nothing is set, leaving Novelty on its default store.
 {{- end }}
 
 {{/*
+Rolling Update Settings
+NOTE: two Novelty instances should not share the persistor, so when the data
+is stored in Cassandra the old pod is stopped before the new one is started.
+*/}}
+{{- define "novelty.rollingUpdate" -}}
+{{- if .Values.cassandra.enabled -}}
+maxSurge: 0
+maxUnavailable: 1
+{{- else -}}
+maxSurge: 25%
+maxUnavailable: 25%
+{{- end }}
+{{- end }}
+
+{{/*
 Cassandra Environment: endpoints and, if enabled, plaintext auth
 */}}
 {{- define "novelty.cassandraEnv" -}}
@@ -210,7 +225,7 @@ exec:
 {{- else }}
 httpGet:
   path: /api/v2/system/liveness
-  port: 8080
+  port: {{ .Values.webserver.port }}
   {{- if .Values.webserver.useTls }}
   scheme: HTTPS
   {{- end }}
@@ -227,12 +242,15 @@ the keyspace and tables are created) before the liveness probe takes over.
 startupProbe:
   {{- include "novelty.probeHandler" . | trim | nindent 2 }}
   periodSeconds: 5
+  timeoutSeconds: 10
   failureThreshold: 60
 livenessProbe:
   {{- include "novelty.probeHandler" . | trim | nindent 2 }}
   initialDelaySeconds: 5
+  timeoutSeconds: 10
 readinessProbe:
   {{- include "novelty.probeHandler" . | trim | nindent 2 }}
   initialDelaySeconds: 5
+  timeoutSeconds: 10
 {{- end }}
 {{- end }}

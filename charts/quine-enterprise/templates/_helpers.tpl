@@ -166,7 +166,7 @@ Cassandra Auth Environment
 - name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_class
   value: PlainTextAuthProvider
 - name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_username
-  value: {{ .Values.cassandra.plaintextAuth.username }}
+  value: {{ .Values.cassandra.plaintextAuth.username | quote }}
 - name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_password
 {{- if .Values.cassandra.plaintextAuth.passwordExistingSecret }}
   valueFrom:
@@ -176,7 +176,7 @@ Cassandra Auth Environment
       key: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, key must be set" 
               .Values.cassandra.plaintextAuth.passwordExistingSecret.key }}
 {{- else }}
-  value: {{ .Values.cassandra.plaintextAuth.password }}
+  value: {{ .Values.cassandra.plaintextAuth.password | quote }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -195,7 +195,7 @@ exec:
 {{- else }}
 httpGet:
   path: /api/v2/system/liveness
-  port: 8080
+  port: {{ .Values.webserver.port }}
   {{- if .Values.webserver.useTls }}
   scheme: HTTPS
   {{- end }}

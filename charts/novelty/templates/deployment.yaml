@@ -6,6 +6,9 @@ metadata:
     {{- include "novelty.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    rollingUpdate:
+      {{- include "novelty.rollingUpdate" . | nindent 6 }}
   selector:
     matchLabels:
       {{- include "novelty.selectorLabels" . | nindent 6 }}
