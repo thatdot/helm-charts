@@ -175,7 +175,7 @@ affinity: {}
 volumes: []
 volumeMounts: []
 
-# Whitespace-separated jdk arguments injected via JDK_JAVA_OPTIONS
+# Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
 extraJdkArgs: ""
 
 # Uncomment to override service account
