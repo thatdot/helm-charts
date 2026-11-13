@@ -113,6 +113,7 @@ service:
   name: novelty
   type: ClusterIP
   externalPort: 8080
+  # Must match webserver.port
   internalPort: 8080
 
 resources:

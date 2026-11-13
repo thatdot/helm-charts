@@ -6,9 +6,12 @@ metadata:
     {{- include "novelty.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  # Two Novelty instances should not share a store, so stop the old pod
+  # before starting the new one.
   strategy:
     rollingUpdate:
-      {{- include "novelty.rollingUpdate" . | nindent 6 }}
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       {{- include "novelty.selectorLabels" . | nindent 6 }}
