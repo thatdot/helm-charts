@@ -46,7 +46,7 @@ spec:
           - name: JDK_JAVA_OPTIONS 
             value: |
               -Dconfig.override_with_env_vars=true
-              -Dthatdot.loglevel={{ .Values.thatdot.logLevel }} 
+              {{ include "quine-enterprise.logLevelConfiguration" . | nindent 14 }}
               -Dquine.cluster.target-size={{ .Values.hostCount }}
               -Dpekko.coordinated-shutdown.phases.before-cluster-shutdown.timeout="{{ sub .Values.memberTerminationGracePeriod 5 }} seconds"
               -Dquine.id.type=uuid

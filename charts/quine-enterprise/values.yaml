@@ -9,10 +9,13 @@ hotSpareCount: 0
 # Grace period for shutdown in seconds
 memberTerminationGracePeriod: 30
 
-# Cluster-wide log level
 thatdot:
+  # Cluster-wide log level
   # Possible values: ERROR, WARN, INFO, DEBUG
   logLevel: WARN
+  # Log level of the audit log (the "thatdot.Audit" logger). The audit log is
+  # off unless this is set, e.g. to INFO.
+  auditLogLevel: ""
 
 # License key secret required for Quine Enterprise
 licenseKeySecret:
@@ -148,6 +151,14 @@ oidc:
     tokenUrl: ""
     # OIDC provider's login endpoint path (appended to locationUrl for user redirect)
     loginPath: ""
+    # (optional) Value the provider issues in the `aud` claim of access tokens
+    # for this deployment. Required for bearer-token authentication: when
+    # unset, bearer-token requests are rejected.
+    accessTokenAudience: ""
+    # (optional) Value sent as the OAuth2 `resource` parameter (RFC 8707) on
+    # authorize redirects and token requests. Mostly needed by Microsoft ADFS
+    # and Azure AD v1.0, where accessTokenAudience must be set to the same value.
+    resourceUri: ""
   client:
     existingSecret:
       # Kubernetes secret containing OIDC client credentials
@@ -171,14 +182,15 @@ oidc:
     secureCookies: true 
 
 # Override image repository and tag to change the docker image used to run thatDot Quine Enterprise
-# The registry URL and credentials are provided by thatDot with your license key
 image:
-  repository: ""
+  repository: registry.license.thatdot.com/thatdot/quine-enterprise
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
-# Registry credentials provided by thatDot (e.g., [{"name": "thatdot-registry"}])
+# Pull secrets for the thatDot registry (e.g., [{"name": "thatdot-registry"}]).
+# The registry username is your thatDot client id and the password is your
+# license key. See the chart README for how to create the secret.
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -223,7 +235,7 @@ affinity: {}
 volumes: []
 volumeMounts: []
 
-# Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
+# Whitespace-separated jdk arguments injected via JDK_JAVA_OPTIONS
 extraJdkArgs: ""
 
 # Uncomment to override service account

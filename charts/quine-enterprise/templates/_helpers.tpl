@@ -83,6 +83,16 @@ not share the persistor.
 
 
 {{/*
+Log Level Configuration Section
+*/}}
+{{- define "quine-enterprise.logLevelConfiguration" -}}
+-Dthatdot.loglevel={{ .Values.thatdot.logLevel }}
+{{- with .Values.thatdot.auditLogLevel }}
+-Dthatdot.audit.loglevel={{ . }}
+{{- end }}
+{{- end }}
+
+{{/*
 Persistence Config Section
 */}}
 {{- define "quine-enterprise.persistenceConfiguration" -}}
@@ -274,6 +284,12 @@ OIDC Configuration Section
 -Dquine.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
 -Dquine.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
 -Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
+{{- with .Values.oidc.provider.accessTokenAudience }}
+-Dquine.auth.oidc.full.provider.access-token-audience="{{ . }}"
+{{- end }}
+{{- with .Values.oidc.provider.resourceUri }}
+-Dquine.auth.oidc.full.provider.resource-uri="{{ . }}"
+{{- end }}
 -Dquine.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
 -Dquine.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
 {{- end }}
