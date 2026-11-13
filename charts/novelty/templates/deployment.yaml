@@ -6,8 +6,8 @@ metadata:
     {{- include "novelty.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  # Two Novelty instances should not share a store, so stop the old pod
-  # before starting the new one.
+  # Two Novelty instances should not share a store, so an update removes the
+  # old pod first rather than starting a second pod alongside it.
   strategy:
     rollingUpdate:
       maxSurge: 0
@@ -81,7 +81,7 @@ spec:
                 name: {{ .Values.licenseKeySecret.name }}
                 key: {{ .Values.licenseKeySecret.key }}
           ports:
-          - containerPort: {{ .Values.service.internalPort }}
+          - containerPort: {{ .Values.webserver.port }}
           {{- include "novelty.probes" . | nindent 10 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
