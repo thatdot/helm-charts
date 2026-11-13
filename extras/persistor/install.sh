@@ -12,21 +12,13 @@ fi
 
 ns="$KUBE_NAMESPACE"
 
-# Cassandra Helm chart
+# Cassandra Helm chart (local chart in ./cassandra, official Apache Cassandra image)
 # Used as persistor for streaming graph (required).
 # Although it is possible to use any cassandra-compatible 
 #   database such as ScyllaDB.
 helm upgrade \
-    --install --wait --timeout 10m0s \
-    --version 11.3.7 \
+    --install --wait --timeout 20m0s \
     --namespace "$ns" \
     --set replicaCount=3 \
-    --set dbUser.user=cassandra \
-    --set dbUser.password=cassandra \
-    --set persistence.size=100Gi \
-    --set resources.requests.cpu=3 \
-    --set resources.requests.memory=7Gi \
-    --set resources.limits.cpu=3 \
-    --set resources.limits.memory=7Gi \
     quine-enterprise-store \
-    oci://registry-1.docker.io/bitnamicharts/cassandra
+    "$(dirname "$0")/cassandra"

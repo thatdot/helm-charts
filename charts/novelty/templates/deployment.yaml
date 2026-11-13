@@ -6,6 +6,14 @@ metadata:
     {{- include "novelty.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  # Two Novelty instances should not share a store, so an update stops the old
+  # pod instead of running a second ready pod alongside it. The new pod is
+  # created while the old one shuts down. (Not `Recreate`: Helm cannot switch
+  # an existing release to it.)
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       {{- include "novelty.selectorLabels" . | nindent 6 }}
@@ -19,6 +27,10 @@ spec:
       labels:
         {{- include "novelty.labels" . | nindent 8 }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -28,6 +40,7 @@ spec:
             value: |
               -Dconfig.override_with_env_vars=true
               {{ include "novelty.logLevelConfiguration" . | nindent 14 }}
+              {{ include "novelty.storeConfiguration" . | nindent 14 }}
               {{ include "novelty.oidcConfiguration" . | nindent 14 }}
               {{ include "novelty.metricsJdkOptions" . | nindent 14 }}
               {{ include "novelty.webserverConfiguration" . | nindent 14 }}
@@ -35,6 +48,7 @@ spec:
               {{ include "novelty.jmxJdkOptions" . | nindent 14 }}
               {{ include "novelty.prometheusJdkOptions" . | nindent 14 }}
               {{ .Values.extraJdkArgs }}
+          {{- include "novelty.cassandraEnv" . | nindent 10 }}
           {{- if and .Values.oidc.enabled .Values.oidc.client.existingSecret.name }}
           - name: CONFIG_FORCE_thatdot_novelty_auth_oidc_full_client_id
             valueFrom:
@@ -69,42 +83,8 @@ spec:
                 name: {{ .Values.licenseKeySecret.name }}
                 key: {{ .Values.licenseKeySecret.key }}
           ports:
-          - containerPort: {{ .Values.service.internalPort }}
-          {{- if .Values.webserver.useMTls.enabled }}
-          {{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
-          livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
-            initialDelaySeconds: 5
-          readinessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
-            initialDelaySeconds: 5
-          {{- end }}
-          {{- else }}
-          livenessProbe:
-            httpGet:
-              path: /api/v2/system/liveness
-              port: 8080
-              {{- if .Values.webserver.useTls }}
-              scheme: HTTPS
-              {{- end }}
-            initialDelaySeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /api/v2/system/liveness
-              port: 8080
-              {{- if .Values.webserver.useTls }}
-              scheme: HTTPS
-              {{- end }}
-            initialDelaySeconds: 5
-          {{- end }}
+          - containerPort: {{ .Values.webserver.port }}
+          {{- include "novelty.probes" . | nindent 10 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}

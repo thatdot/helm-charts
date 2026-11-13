@@ -94,6 +94,12 @@ OIDC Configuration Section
 -Dthatdot.novelty.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
 -Dthatdot.novelty.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
 -Dthatdot.novelty.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
+{{- with .Values.oidc.provider.accessTokenAudience }}
+-Dthatdot.novelty.auth.oidc.full.provider.access-token-audience="{{ . }}"
+{{- end }}
+{{- with .Values.oidc.provider.resourceUri }}
+-Dthatdot.novelty.auth.oidc.full.provider.resource-uri="{{ . }}"
+{{- end }}
 -Dthatdot.novelty.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
 -Dthatdot.novelty.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
 {{- end }}
@@ -105,6 +111,55 @@ Log Level Configuration Section
 {{- define "novelty.logLevelConfiguration" -}}
 {{- if .Values.thatdot.logLevel }}
 -Dthatdot.loglevel={{ .Values.thatdot.logLevel }}
+{{- end }}
+{{- with .Values.thatdot.auditLogLevel }}
+-Dthatdot.audit.loglevel={{ . }}
+{{- end }}
+{{- end }}
+
+{{/*
+Store Config Section
+When cassandra is disabled nothing is set, leaving Novelty on its default store.
+*/}}
+{{- define "novelty.storeConfiguration" -}}
+{{- if .Values.cassandra.enabled }}
+-Dthatdot.novelty.store.type=cassandra
+-Dthatdot.novelty.store.keyspace={{ .Values.cassandra.keyspace }}
+-Dthatdot.novelty.store.should-create-keyspace={{ .Values.cassandra.shouldCreateKeyspace }}
+-Dthatdot.novelty.store.should-create-tables={{ .Values.cassandra.shouldCreateTables }}
+-Dthatdot.novelty.store.replication-factor={{ .Values.cassandra.replicationFactor }}
+-Dthatdot.novelty.store.read-consistency={{ .Values.cassandra.readConsistency }}
+-Dthatdot.novelty.store.write-consistency={{ .Values.cassandra.writeConsistency }}
+-Dthatdot.novelty.store.local-datacenter={{ .Values.cassandra.localDatacenter }}
+-Dthatdot.novelty.store.read-timeout={{ .Values.cassandra.readTimeout }}
+-Dthatdot.novelty.store.write-timeout={{ .Values.cassandra.writeTimeout }}
+{{- end }}
+{{- end }}
+
+{{/*
+Cassandra Environment: endpoints and, if enabled, plaintext auth
+*/}}
+{{- define "novelty.cassandraEnv" -}}
+{{- if .Values.cassandra.enabled }}
+- name: CASSANDRA_ENDPOINTS
+  value: {{ required "cassandra.endpoints is required when cassandra.enabled is true" .Values.cassandra.endpoints | quote }}
+{{- if .Values.cassandra.plaintextAuth.enabled }}
+- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_class
+  value: PlainTextAuthProvider
+- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_username
+  value: {{ .Values.cassandra.plaintextAuth.username | quote }}
+- name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_password
+{{- if .Values.cassandra.plaintextAuth.passwordExistingSecret }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, name must be set"
+               .Values.cassandra.plaintextAuth.passwordExistingSecret.name }}
+      key: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, key must be set"
+              .Values.cassandra.plaintextAuth.passwordExistingSecret.key }}
+{{- else }}
+  value: {{ .Values.cassandra.plaintextAuth.password | quote }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
 
@@ -138,5 +193,47 @@ Webserver Advertise Config Section
 {{- if .Values.webserverAdvertise.port }}
 -Dthatdot.novelty.webserver-advertise.port={{ .Values.webserverAdvertise.port }}
 {{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Health check used by every probe. With mTLS the kubelet cannot call the
+webserver, so the check runs inside the container against the health endpoints.
+*/}}
+{{- define "novelty.probeHandler" -}}
+{{- if .Values.webserver.useMTls.enabled }}
+exec:
+  command:
+    - /bin/sh
+    - -c
+    - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
+{{- else }}
+httpGet:
+  path: /api/v2/system/liveness
+  port: {{ .Values.webserver.port }}
+  {{- if .Values.webserver.useTls }}
+  scheme: HTTPS
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Startup, Liveness and Readiness Probes
+The startup probe gives Novelty up to 5 minutes to start (for example while
+the keyspace and tables are created) before the liveness probe takes over.
+*/}}
+{{- define "novelty.probes" -}}
+{{- if or (not .Values.webserver.useMTls.enabled) .Values.webserver.useMTls.healthEndpoints.enabled }}
+startupProbe:
+  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  periodSeconds: 5
+  timeoutSeconds: 10
+  failureThreshold: 60
+livenessProbe:
+  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  timeoutSeconds: 10
+readinessProbe:
+  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  timeoutSeconds: 10
 {{- end }}
 {{- end }}

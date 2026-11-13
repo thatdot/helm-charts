@@ -12,6 +12,55 @@ licenseKeySecret:
   name: ""
   key: "license-key"
 
+# Cassandra Persistor Settings:
+# Set enabled to true to store Novelty's data in a Cassandra cluster.
+# If enabled is set to false, Novelty uses its default store: a RocksDB database
+# on the pod's local filesystem, which is lost when the pod is replaced unless
+# a volume is mounted for it.
+cassandra:
+  enabled: false
+
+  plaintextAuth:
+    # Enable to use basic auth with Cassandra
+    enabled: false
+    username: "cassandra"
+    passwordExistingSecret: {}
+      # # Set passwordExisting secret to use configuration from a kubernetes secret
+      # # overrides cassandra.plaintextAuth.password
+      # # Ex:
+      # name: "my-secret"
+      # key: "my-secret-key"
+    password: "cassandra"
+
+  # Comma-separated list of Cassandra endpoints
+  # Required when enabled is true.
+  endpoints: ""
+
+  # Configure the default keyspace name
+  keyspace: novelty
+
+  # Set these two values to true for Novelty to create its own keyspace and tables
+  # If false, keyspace and tables must be existing before this chart is installed.
+  shouldCreateKeyspace: true
+  shouldCreateTables: true
+
+  # How many copies of each datum the Cassandra cluster should retain
+  replicationFactor: 1
+
+  # How many hosts must agree on a datum for Novelty to consider that
+  # datum written/read
+  readConsistency: LOCAL_QUORUM
+  writeConsistency: LOCAL_QUORUM
+
+  # Passed through to Cassandra
+  localDatacenter: datacenter1
+
+  # How long to wait before considering a write operation failed
+  writeTimeout: 10s
+
+  # How long to wait before considering a read operation failed
+  readTimeout: 10s
+
 # Metrics Configuration:
 metrics:
   jmx:
@@ -48,19 +97,23 @@ jmxRemote:
   ssl: false
   rmiHostname: localhost
 
-# The registry URL and credentials are provided by thatDot with your license key
+# Override image repository and tag to change the docker image used to run thatDot Novelty
 image:
-  repository: ""
+  repository: registry.license.thatdot.com/thatdot/novelty
   pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
-# Registry credentials provided by thatDot
+# Pull secrets for the thatDot registry (e.g., [{"name": "thatdot-registry"}]).
+# The registry username is your thatDot client id and the password is your
+# license key. See the chart README for how to create the secret.
 imagePullSecrets: []
 
 service:
   name: novelty
   type: ClusterIP
   externalPort: 8080
+  # Deprecated and ignored: the service targets webserver.port
   internalPort: 8080
 
 resources:
@@ -84,6 +137,14 @@ oidc:
     tokenUrl: ""
     # OIDC provider's login endpoint path (appended to locationUrl for user redirect)
     loginPath: ""
+    # (optional) Value the provider issues in the `aud` claim of access tokens
+    # for this deployment. Required for bearer-token authentication: when
+    # unset, bearer-token requests are rejected.
+    accessTokenAudience: ""
+    # (optional) Value sent as the OAuth2 `resource` parameter (RFC 8707) on
+    # authorize redirects and token requests. Mostly needed by Microsoft ADFS
+    # and Azure AD v1.0, where accessTokenAudience must be set to the same value.
+    resourceUri: ""
   client:
     existingSecret:
       # Kubernetes secret containing OIDC client credentials
@@ -94,7 +155,11 @@ oidc:
         # Secret key name containing the OIDC client secret
         clientSecretKey: "client-secret"
   session:
-    # Auto-generate session encryption key if no existing secret provided
+    # Auto-generate session encryption key if no existing secret provided.
+    # The generated key is read back from the cluster on upgrade, so it only
+    # stays stable when Helm installs the chart itself. Tools that render the
+    # chart without cluster access (helm template, Argo CD) generate a new key
+    # on every render: use existingSecret with those.
     autoGenerate: true
     existingSecret:
       # Kubernetes secret containing session encryption key (if not auto-generating)
@@ -110,6 +175,9 @@ oidc:
 thatdot:
   # Cluster-wide log level (ERROR, WARN, INFO, DEBUG)
   logLevel: WARN
+  # Log level of the audit log (the "thatdot.Audit" logger). The audit log is
+  # off unless this is set, e.g. to INFO.
+  auditLogLevel: ""
 
 webserver:
   enabled: true
@@ -136,5 +204,5 @@ webserverAdvertise:
 #   address with the configured healthEndpoints.port
 # - If healthEndpoints.enabled is false, health probes will be disabled
 
-# Whitespace-separated jdk arguments injected via JAVA_JDK_OPTIONS
+# Whitespace-separated jdk arguments injected via JDK_JAVA_OPTIONS
 extraJdkArgs: ""

@@ -1,0 +1,8 @@
+apiVersion: v2
+name: cassandra
+description: Example Apache Cassandra cluster, built on the official image, for use as a thatDot persistor
+type: application
+
+version: 0.1.0
+
+appVersion: "4.1"
