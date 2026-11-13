@@ -195,3 +195,44 @@ Webserver Advertise Config Section
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Health check used by every probe. With mTLS the kubelet cannot call the
+webserver, so the check runs inside the container against the health endpoints.
+*/}}
+{{- define "novelty.probeHandler" -}}
+{{- if .Values.webserver.useMTls.enabled }}
+exec:
+  command:
+    - /bin/sh
+    - -c
+    - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
+{{- else }}
+httpGet:
+  path: /api/v2/system/liveness
+  port: 8080
+  {{- if .Values.webserver.useTls }}
+  scheme: HTTPS
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Startup, Liveness and Readiness Probes
+The startup probe gives Novelty up to 5 minutes to start (for example while
+the keyspace and tables are created) before the liveness probe takes over.
+*/}}
+{{- define "novelty.probes" -}}
+{{- if or (not .Values.webserver.useMTls.enabled) .Values.webserver.useMTls.healthEndpoints.enabled }}
+startupProbe:
+  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  periodSeconds: 5
+  failureThreshold: 60
+livenessProbe:
+  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  initialDelaySeconds: 5
+readinessProbe:
+  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  initialDelaySeconds: 5
+{{- end }}
+{{- end }}

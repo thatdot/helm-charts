@@ -182,45 +182,44 @@ Cassandra Auth Environment
 {{- end }}
 
 {{/*
-Liveness and Readiness Probes
+Health check used by every probe. With mTLS the kubelet cannot call the
+webserver, so the check runs inside the container against the health endpoints.
+*/}}
+{{- define "quine-enterprise.probeHandler" -}}
+{{- if .Values.webserver.useMTls.enabled }}
+exec:
+  command:
+    - /bin/sh
+    - -c
+    - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
+{{- else }}
+httpGet:
+  path: /api/v2/system/liveness
+  port: 8080
+  {{- if .Values.webserver.useTls }}
+  scheme: HTTPS
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Startup, Liveness and Readiness Probes
+The startup probe gives a member up to 5 minutes to start (for example while
+the keyspace and tables are created) before the liveness probe takes over.
 */}}
 {{- define "quine-enterprise.probes" -}}
-{{- if .Values.webserver.useMTls.enabled }}
-{{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
+{{- if or (not .Values.webserver.useMTls.enabled) .Values.webserver.useMTls.healthEndpoints.enabled }}
+startupProbe:
+  {{- include "quine-enterprise.probeHandler" . | trim | nindent 2 }}
+  periodSeconds: 5
+  timeoutSeconds: 10
+  failureThreshold: 60
 livenessProbe:
-  exec:
-    command:
-      - /bin/sh
-      - -c
-      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
+  {{- include "quine-enterprise.probeHandler" . | trim | nindent 2 }}
   initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
-  exec:
-    command:
-      - /bin/sh
-      - -c
-      - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
-  initialDelaySeconds: 5
-  timeoutSeconds: 10
-{{- end }}
-{{- else }}
-livenessProbe:
-  httpGet:
-    path: /api/v2/system/liveness
-    port: 8080
-    {{- if .Values.webserver.useTls }}
-    scheme: HTTPS
-    {{- end }}
-  initialDelaySeconds: 5
-  timeoutSeconds: 10
-readinessProbe:
-  httpGet:
-    path: /api/v2/system/liveness
-    port: 8080
-    {{- if .Values.webserver.useTls }}
-    scheme: HTTPS
-    {{- end }}
+  {{- include "quine-enterprise.probeHandler" . | trim | nindent 2 }}
   initialDelaySeconds: 5
   timeoutSeconds: 10
 {{- end }}
