@@ -19,7 +19,7 @@ done
 
 # Kafka cluster to use for ingest/output
 # RedPanda (Kafka API compatible) Helm chart
-helm repo add redpanda https://charts.redpanda.com
+helm repo add redpanda https://charts.redpanda.com --force-update
 helm upgrade redpanda redpanda/redpanda \
     --install \
     --namespace "$kube_namespace" \
@@ -29,7 +29,7 @@ helm upgrade redpanda redpanda/redpanda \
 
 # Metrics and Monitoring
 # InfluxDB Helm chart
-helm repo add influxdata https://helm.influxdata.com/
+helm repo add influxdata https://helm.influxdata.com/ --force-update
 helm upgrade influx influxdata/influxdb \
     --install \
     --namespace "$kube_namespace" \
@@ -37,7 +37,7 @@ helm upgrade influx influxdata/influxdb \
 
 # Grafana Helm chart
 kubectl apply -f grafana-secret.yaml --namespace "$kube_namespace"
-helm repo add grafana-community https://grafana-community.github.io/helm-charts
+helm repo add grafana-community https://grafana-community.github.io/helm-charts --force-update
 helm upgrade grafana grafana-community/grafana \
     --install \
     --namespace "$kube_namespace" \
