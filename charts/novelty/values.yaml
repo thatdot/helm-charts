@@ -155,7 +155,11 @@ oidc:
         # Secret key name containing the OIDC client secret
         clientSecretKey: "client-secret"
   session:
-    # Auto-generate session encryption key if no existing secret provided
+    # Auto-generate session encryption key if no existing secret provided.
+    # The generated key is read back from the cluster on upgrade, so it only
+    # stays stable when Helm installs the chart itself. Tools that render the
+    # chart without cluster access (helm template, Argo CD) generate a new key
+    # on every render: use existingSecret with those.
     autoGenerate: true
     existingSecret:
       # Kubernetes secret containing session encryption key (if not auto-generating)
