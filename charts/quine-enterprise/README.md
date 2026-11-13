@@ -91,9 +91,6 @@ kubectl create secret docker-registry quine-enterprise-registry \
   --docker-password=<license key>
 ```
 
-The image tag defaults to the chart's `appVersion`. Set `image.tag` to run a
-different version of Quine Enterprise.
-
 ### Obtaining a License Key
 
 thatDot provides license keys as part of an evaluation agreement or purchase order. To schedule a demo or purchase a license, please:

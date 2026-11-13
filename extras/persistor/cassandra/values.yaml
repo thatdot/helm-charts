@@ -1,4 +1,8 @@
 # Default values for the example Cassandra persistor.
+#
+# Every node requires a username and password. Cassandra creates its default
+# superuser: username `cassandra`, password `cassandra`. Change that password
+# before storing real data.
 
 # Official Apache Cassandra image from Docker Hub.
 image:
@@ -10,39 +14,21 @@ image:
 # Number of Cassandra nodes
 replicaCount: 1
 
-clusterName: thatdot-persistor
+persistence:
+  size: 100Gi
+  # Uses the cluster's default storage class when empty
+  storageClass: ""
 
-# Datacenter and rack reported by every node. The datacenter must match
-# `cassandra.localDatacenter` in the Quine Enterprise and Novelty charts.
-datacenter: datacenter1
-rack: rack1
-
-# Require a username and password (Cassandra's PasswordAuthenticator).
-# Cassandra then creates its default superuser: username `cassandra`,
-# password `cassandra`. Change that password before storing real data.
-auth:
-  enabled: true
+resources:
+  requests:
+    cpu: 3
+    memory: 7Gi
+  limits:
+    cpu: 3
+    memory: 7Gi
 
 # JVM heap. Set these explicitly: Cassandra otherwise sizes its heap from the
 # memory of the Kubernetes node rather than from the container's memory limit.
 # Keep maxHeapSize at or below half of the memory limit.
-maxHeapSize: 1G
-heapNewSize: 256M
-
-persistence:
-  size: 10Gi
-  # Uses the cluster's default storage class when empty
-  storageClass: ""
-
-resources: {}
-  # requests:
-  #   cpu: 1
-  #   memory: 2Gi
-  # limits:
-  #   memory: 2Gi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+maxHeapSize: 3G
+heapNewSize: 800M

@@ -15,16 +15,16 @@ ns="$KUBE_NAMESPACE"
 # Metrics and Monitoring
 
 # InfluxDB Helm chart
-helm repo add influxdata https://helm.influxdata.com/ --force-update
-helm upgrade influx influxdata/influxdb \
+helm upgrade influx influxdb \
+    --repo https://helm.influxdata.com/ \
     --install \
     --namespace "$ns" \
     --values influxdb-values.yaml
 
 # Grafana Helm chart
 kubectl apply -f grafana-secret.yaml --namespace "$ns"
-helm repo add grafana-community https://grafana-community.github.io/helm-charts --force-update
-helm upgrade grafana grafana-community/grafana \
+helm upgrade grafana grafana \
+    --repo https://grafana-community.github.io/helm-charts \
     --install \
     --namespace "$ns" \
     --values grafana-values.yaml

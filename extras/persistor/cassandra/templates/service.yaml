@@ -6,11 +6,9 @@ metadata:
   labels:
     {{- include "cassandra.labels" . | nindent 4 }}
 spec:
-  type: ClusterIP
   ports:
     - port: 9042
       targetPort: cql
-      protocol: TCP
       name: cql
   selector:
     {{- include "cassandra.selectorLabels" . | nindent 4 }}
@@ -29,11 +27,6 @@ spec:
   ports:
     - port: 7000
       targetPort: intra-node
-      protocol: TCP
       name: intra-node
-    - port: 9042
-      targetPort: cql
-      protocol: TCP
-      name: cql
   selector:
     {{- include "cassandra.selectorLabels" . | nindent 4 }}
