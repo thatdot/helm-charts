@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
+# Run from this directory so the relative paths below resolve
+cd "$(dirname "$0")"
+
 kube_namespace="thatdot-example"
 
-kubectl create namespace "$kube_namespace"
+# The license key and registry secrets must be created first (see README.md)
+for secret in quine-enterprise-license quine-enterprise-registry novelty-license novelty-registry; do
+    if ! kubectl get secret "$secret" --namespace "$kube_namespace" > /dev/null 2>&1; then
+        echo "Error: secret \"$secret\" not found in namespace \"$kube_namespace\""
+        echo "Create the namespace and the secrets described in README.md, then run this script again."
+        echo "Exiting..."
+        exit 1
+    fi
+done
 
 # Kafka cluster to use for ingest/output
 # RedPanda (Kafka API compatible) Helm chart
@@ -24,49 +37,35 @@ helm upgrade influx influxdata/influxdb \
 
 # Grafana Helm chart
 kubectl apply -f grafana-secret.yaml --namespace "$kube_namespace"
-helm repo add grafana https://grafana.github.io/helm-charts
-helm upgrade grafana grafana/grafana \
+helm repo add grafana-community https://grafana-community.github.io/helm-charts
+helm upgrade grafana grafana-community/grafana \
     --install \
     --namespace "$kube_namespace" \
     --values grafana-values.yaml
 
-# Add thatDot Helm repo
-helm repo add thatdot https://helm.thatdot.com
-
-# Novelty Helm chart
-helm upgrade \
-    --install \
-    --version 0.4.4 \
-    --namespace "$kube_namespace" \
-    novelty \
-    thatdot/novelty \
-    --values novelty-values.yaml
-
-# Cassandra Helm chart
-# Used as persistor for Quine Enterprise (required).
+# Cassandra Helm chart (local chart in ../persistor/cassandra, official Apache Cassandra image)
+# Used as persistor for Quine Enterprise (required) and Novelty.
 # Although it is possible to use any cassandra-compatible 
 #   database such as ScyllaDB.
 helm upgrade \
-    --install --wait --timeout 10m0s \
-    --version 11.3.7 \
+    --install --wait --timeout 20m0s \
     --namespace "$kube_namespace" \
-    --set replicaCount=1 \
-    --set dbUser.user=cassandra \
-    --set dbUser.password=cassandra \
-    --set persistence.size=100Gi \
-    --set resources.requests.cpu=3 \
-    --set resources.requests.memory=7Gi \
-    --set resources.limits.cpu=3 \
-    --set resources.limits.memory=7Gi \
     quine-enterprise-store \
-    oci://registry-1.docker.io/bitnamicharts/cassandra
+    ../persistor/cassandra \
+    --values cassandra-values.yaml
+
+# Novelty Helm chart
+helm upgrade \
+    --install --wait --timeout 10m0s \
+    --namespace "$kube_namespace" \
+    novelty \
+    ../../charts/novelty \
+    --values novelty-values.yaml
 
 # Quine Enterprise Helm chart
 helm upgrade \
-    --install \
-    --version 0.4.9 \
+    --install --wait --timeout 10m0s \
     --namespace "$kube_namespace" \
     quine-enterprise \
-    thatdot/quine-enterprise \
+    ../../charts/quine-enterprise \
     --values quine-enterprise-values.yaml
-

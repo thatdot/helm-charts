@@ -1,0 +1,102 @@
+{{- $fullname := include "cassandra.fullname" . }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fullname }}
+  labels:
+    {{- include "cassandra.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ $fullname }}-headless
+  replicas: {{ .Values.replicaCount }}
+  # Nodes must join the cluster one at a time
+  podManagementPolicy: OrderedReady
+  selector:
+    matchLabels:
+      {{- include "cassandra.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "cassandra.labels" . | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: cassandra
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.auth.enabled }}
+          # The official image has no setting for the authenticator, so edit
+          # cassandra.yaml before handing over to the image's entrypoint.
+          command:
+            - bash
+            - -ec
+            - |
+              sed -ri 's/^authenticator:.*/authenticator: PasswordAuthenticator/' /etc/cassandra/cassandra.yaml
+              exec docker-entrypoint.sh cassandra -f
+          {{- end }}
+          env:
+            - name: CASSANDRA_CLUSTER_NAME
+              value: {{ .Values.clusterName | quote }}
+            - name: CASSANDRA_SEEDS
+              value: {{ $fullname }}-0.{{ $fullname }}-headless.{{ .Release.Namespace }}.svc.cluster.local
+            - name: CASSANDRA_ENDPOINT_SNITCH
+              value: GossipingPropertyFileSnitch
+            - name: CASSANDRA_DC
+              value: {{ .Values.datacenter | quote }}
+            - name: CASSANDRA_RACK
+              value: {{ .Values.rack | quote }}
+            - name: MAX_HEAP_SIZE
+              value: {{ .Values.maxHeapSize | quote }}
+            - name: HEAP_NEWSIZE
+              value: {{ .Values.heapNewSize | quote }}
+          ports:
+            - containerPort: 7000
+              name: intra-node
+            - containerPort: 9042
+              name: cql
+          # The CQL port only opens once the node has joined the cluster
+          startupProbe:
+            tcpSocket:
+              port: cql
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: cql
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: cql
+            periodSeconds: 30
+            failureThreshold: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: ["nodetool", "drain"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/cassandra
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- with .Values.persistence.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}

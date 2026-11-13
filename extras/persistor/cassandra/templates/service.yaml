@@ -1,0 +1,39 @@
+# Client service: the persistor endpoint. Only routes to ready nodes.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cassandra.fullname" . }}
+  labels:
+    {{- include "cassandra.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9042
+      targetPort: cql
+      protocol: TCP
+      name: cql
+  selector:
+    {{- include "cassandra.selectorLabels" . | nindent 4 }}
+---
+# Headless service: gives every node a stable DNS name, which the nodes use to
+# find the seed node before they are ready.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cassandra.fullname" . }}-headless
+  labels:
+    {{- include "cassandra.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - port: 7000
+      targetPort: intra-node
+      protocol: TCP
+      name: intra-node
+    - port: 9042
+      targetPort: cql
+      protocol: TCP
+      name: cql
+  selector:
+    {{- include "cassandra.selectorLabels" . | nindent 4 }}

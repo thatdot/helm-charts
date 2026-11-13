@@ -1,0 +1,15 @@
+replicaCount: 1
+
+persistence:
+  size: 100Gi
+
+resources:
+  requests:
+    cpu: 3
+    memory: 7Gi
+  limits:
+    cpu: 3
+    memory: 7Gi
+
+maxHeapSize: 3G
+heapNewSize: 800M

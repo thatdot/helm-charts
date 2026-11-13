@@ -23,8 +23,8 @@ helm upgrade influx influxdata/influxdb \
 
 # Grafana Helm chart
 kubectl apply -f grafana-secret.yaml --namespace "$ns"
-helm repo add grafana https://grafana.github.io/helm-charts
-helm upgrade grafana grafana/grafana \
+helm repo add grafana-community https://grafana-community.github.io/helm-charts
+helm upgrade grafana grafana-community/grafana \
     --install \
     --namespace "$ns" \
     --values grafana-values.yaml

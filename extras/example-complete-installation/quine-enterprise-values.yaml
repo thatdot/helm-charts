@@ -1,12 +1,14 @@
 
 hostCount: 3
 
-licenseKey: ""
+# Secret holding the Quine Enterprise license key (see README.md)
+licenseKeySecret:
+  name: quine-enterprise-license
+  key: license-key
 
-image:
-  repository: ""
-
-imagePullSecrets: []
+# Pull secret for the thatDot registry (see README.md)
+imagePullSecrets:
+  - name: quine-enterprise-registry
 
 service:
   type: ClusterIP
