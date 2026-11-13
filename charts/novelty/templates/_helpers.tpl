@@ -231,11 +231,9 @@ startupProbe:
   failureThreshold: 60
 livenessProbe:
   {{- include "novelty.probeHandler" . | trim | nindent 2 }}
-  initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
   {{- include "novelty.probeHandler" . | trim | nindent 2 }}
-  initialDelaySeconds: 5
   timeoutSeconds: 10
 {{- end }}
 {{- end }}

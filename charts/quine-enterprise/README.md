@@ -51,6 +51,9 @@ helm install my-quine-enterprise thatdot/quine-enterprise \
   --set cassandra.endpoints=<cassandra endpoints>
 ```
 
+With `--set`, separate several endpoints with an escaped comma (`host1\,host2`),
+or set `cassandra.endpoints` in a values file instead.
+
 To uninstall the chart:
 
 ```

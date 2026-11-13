@@ -6,8 +6,10 @@ metadata:
     {{- include "novelty.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  # Two Novelty instances should not share a store, so an update removes the
-  # old pod first rather than starting a second pod alongside it.
+  # Two Novelty instances should not share a store, so an update stops the old
+  # pod instead of running a second ready pod alongside it. The new pod is
+  # created while the old one shuts down. (Not `Recreate`: Helm cannot switch
+  # an existing release to it.)
   strategy:
     rollingUpdate:
       maxSurge: 0

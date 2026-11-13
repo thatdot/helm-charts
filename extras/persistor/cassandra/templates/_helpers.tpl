@@ -1,9 +1,10 @@
 {{/*
 Fully qualified app name: "<release>-cassandra". This is also the name of the
-client Service, i.e. the persistor endpoint.
+client Service, i.e. the persistor endpoint. Truncated to leave room for the
+"-headless" Service suffix within the 63-character name limit.
 */}}
 {{- define "cassandra.fullname" -}}
-{{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" .Release.Name .Chart.Name | trunc 54 | trimSuffix "-" }}
 {{- end }}
 
 {{/*

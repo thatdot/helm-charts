@@ -216,11 +216,9 @@ startupProbe:
   failureThreshold: 60
 livenessProbe:
   {{- include "quine-enterprise.probeHandler" . | trim | nindent 2 }}
-  initialDelaySeconds: 5
   timeoutSeconds: 10
 readinessProbe:
   {{- include "quine-enterprise.probeHandler" . | trim | nindent 2 }}
-  initialDelaySeconds: 5
   timeoutSeconds: 10
 {{- end }}
 {{- end }}

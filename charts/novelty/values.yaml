@@ -21,7 +21,7 @@ cassandra:
   enabled: false
 
   plaintextAuth:
-    # Enable this section use basic auth with cassandra
+    # Enable to use basic auth with Cassandra
     enabled: false
     username: "cassandra"
     passwordExistingSecret: {}
@@ -32,7 +32,7 @@ cassandra:
       # key: "my-secret-key"
     password: "cassandra"
 
-  # Configured endpoints a comma-separated list of cassandra cluster URLs
+  # Comma-separated list of Cassandra endpoints
   # Required when enabled is true.
   endpoints: ""
 
