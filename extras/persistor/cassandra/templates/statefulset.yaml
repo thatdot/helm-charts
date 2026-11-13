@@ -37,7 +37,7 @@ spec:
             - name: CASSANDRA_CLUSTER_NAME
               value: {{ .Values.clusterName | quote }}
             - name: CASSANDRA_SEEDS
-              value: {{ $fullname }}-0.{{ $fullname }}-headless.{{ .Release.Namespace }}.svc.cluster.local
+              value: {{ $fullname }}-0.{{ $fullname }}-headless
             - name: CASSANDRA_ENDPOINT_SNITCH
               value: GossipingPropertyFileSnitch
             - name: CASSANDRA_DC
@@ -53,16 +53,22 @@ spec:
               name: intra-node
             - containerPort: 9042
               name: cql
-          # The CQL port only opens once the node has joined the cluster
+          # The CQL port only opens once the node has joined the cluster.
+          # Joining a cluster that holds data can take a long time, so allow
+          # up to an hour.
           startupProbe:
             tcpSocket:
               port: cql
             periodSeconds: 10
-            failureThreshold: 60
+            failureThreshold: 360
+          # Cassandra creates its default superuser about ten seconds after
+          # the CQL port opens. Wait for a few successes so that clients
+          # started after `helm --wait` can log in.
           readinessProbe:
             tcpSocket:
               port: cql
             periodSeconds: 10
+            successThreshold: 3
           livenessProbe:
             tcpSocket:
               port: cql

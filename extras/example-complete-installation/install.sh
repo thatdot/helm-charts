@@ -9,8 +9,8 @@ kube_namespace="thatdot-example"
 
 # The license key and registry secrets must be created first (see README.md)
 for secret in quine-enterprise-license quine-enterprise-registry novelty-license novelty-registry; do
-    if ! kubectl get secret "$secret" --namespace "$kube_namespace" > /dev/null 2>&1; then
-        echo "Error: secret \"$secret\" not found in namespace \"$kube_namespace\""
+    if ! kubectl get secret "$secret" --namespace "$kube_namespace" > /dev/null; then
+        echo "Error: could not read secret \"$secret\" in namespace \"$kube_namespace\""
         echo "Create the namespace and the secrets described in README.md, then run this script again."
         echo "Exiting..."
         exit 1

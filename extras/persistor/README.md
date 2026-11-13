@@ -12,6 +12,11 @@ for configuration details.
 a managed Cassandra compatible service or a Cassandra operator such as
 [K8ssandra](https://k8ssandra.io/).
 
+**Note:** earlier versions of this extra installed the Bitnami Cassandra chart
+under the same release name. The two are not compatible: uninstall the old
+release and delete its persistent volume claims before installing this one.
+Data stored by the Bitnami based install is not carried over.
+
 ### Usage
 
 To install the cassandra persistor in the `thatdot-example` namespace:
@@ -65,3 +70,9 @@ services](https://kubernetes.io/docs/concepts/services-networking/dns-pod-servic
 **Note:** `cassandra`/`cassandra` is the default superuser that Cassandra
 creates. It is intended for evaluation only. Change the password before
 storing real data.
+
+**Note:** Cassandra keeps its logins in the `system_auth` keyspace on a single
+node by default, and the charts' default `replicationFactor` is also 1. While
+that node is down, clients cannot log in even though the other nodes are up.
+To tolerate the loss of a node, raise the replication of `system_auth` and the
+`replicationFactor` of the Quine Enterprise and Novelty charts.
