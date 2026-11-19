@@ -73,18 +73,10 @@ spec:
           {{- if .Values.webserver.useMTls.enabled }}
           {{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
           livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
+            {{- include "novelty.loopbackHealthExec" . | nindent 12 }}
             initialDelaySeconds: 5
           readinessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
+            {{- include "novelty.loopbackHealthExec" . | nindent 12 }}
             initialDelaySeconds: 5
           {{- end }}
           {{- else }}
