@@ -25,7 +25,7 @@ cassandra:
     enabled: false
     username: "cassandra"
     passwordExistingSecret: {}
-      # # Set passwordExisting secret to use configuration from a kubernetes secret
+      # # Set passwordExistingSecret to read the password from a Kubernetes secret
       # # overrides cassandra.plaintextAuth.password
       # # Ex:
       # name: "my-secret"

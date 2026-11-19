@@ -220,9 +220,9 @@ Health check used by every probe. With mTLS the kubelet cannot call the
 webserver, so the check runs inside the container against the health endpoints.
 */}}
 {{- define "novelty.probeHandler" -}}
-{{- if .Values.webserver.useMTls.enabled }}
+{{- if .Values.webserver.useMTls.enabled -}}
 {{ include "novelty.loopbackHealthExec" . }}
-{{- else }}
+{{- else -}}
 httpGet:
   path: /api/v2/system/liveness
   port: {{ .Values.webserver.port }}
@@ -240,15 +240,15 @@ the keyspace and tables are created) before the liveness probe takes over.
 {{- define "novelty.probes" -}}
 {{- if or (not .Values.webserver.useMTls.enabled) .Values.webserver.useMTls.healthEndpoints.enabled }}
 startupProbe:
-  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  {{- include "novelty.probeHandler" . | nindent 2 }}
   periodSeconds: 5
   timeoutSeconds: 10
   failureThreshold: 60
 livenessProbe:
-  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  {{- include "novelty.probeHandler" . | nindent 2 }}
   timeoutSeconds: 10
 readinessProbe:
-  {{- include "novelty.probeHandler" . | trim | nindent 2 }}
+  {{- include "novelty.probeHandler" . | nindent 2 }}
   timeoutSeconds: 10
 {{- end }}
 {{- end }}

@@ -44,8 +44,7 @@ helm upgrade grafana grafana \
 
 # Cassandra Helm chart (local chart in ../persistor/cassandra, official Apache Cassandra image)
 # Used as persistor for Quine Enterprise (required) and Novelty.
-# Although it is possible to use any cassandra-compatible 
-#   database such as ScyllaDB.
+# Any Cassandra-compatible database (e.g. ScyllaDB) also works.
 helm upgrade \
     --install --wait --timeout 20m0s \
     --namespace "$kube_namespace" \

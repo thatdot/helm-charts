@@ -13,9 +13,8 @@ fi
 ns="$KUBE_NAMESPACE"
 
 # Cassandra Helm chart (local chart in ./cassandra, official Apache Cassandra image)
-# Used as persistor for streaming graph (required).
-# Although it is possible to use any cassandra-compatible 
-#   database such as ScyllaDB.
+# Used as persistor for Quine Enterprise (required) and, optionally, Novelty.
+# Any Cassandra-compatible database (e.g. ScyllaDB) also works.
 helm upgrade \
     --install --wait --timeout 20m0s \
     --namespace "$ns" \

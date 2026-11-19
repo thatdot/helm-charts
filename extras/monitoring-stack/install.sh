@@ -12,6 +12,9 @@ fi
 
 ns="$KUBE_NAMESPACE"
 
+# Run from this directory so the relative paths below resolve
+cd "$(dirname "$0")" || exit 1
+
 # Metrics and Monitoring
 
 # InfluxDB Helm chart
