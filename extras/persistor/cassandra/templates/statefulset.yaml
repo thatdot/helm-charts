@@ -1,0 +1,96 @@
+{{- $fullname := include "cassandra.fullname" . }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fullname }}
+  labels:
+    {{- include "cassandra.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ $fullname }}-headless
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cassandra.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "cassandra.selectorLabels" . | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: cassandra
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # The official image has no setting for the authenticator, so
+          # require passwords by editing cassandra.yaml before handing over to
+          # the image's entrypoint. Fail if the edit did not apply.
+          command:
+            - bash
+            - -ec
+            - |
+              sed -ri 's/^authenticator:.*/authenticator: PasswordAuthenticator/' /etc/cassandra/cassandra.yaml
+              grep -q '^authenticator: PasswordAuthenticator$' /etc/cassandra/cassandra.yaml
+              exec docker-entrypoint.sh cassandra -f
+          env:
+            - name: CASSANDRA_CLUSTER_NAME
+              value: thatdot-persistor
+            - name: CASSANDRA_SEEDS
+              value: {{ $fullname }}-0.{{ $fullname }}-headless
+            - name: CASSANDRA_ENDPOINT_SNITCH
+              value: GossipingPropertyFileSnitch
+            # Must match `cassandra.localDatacenter` in the Quine Enterprise
+            # and Novelty charts
+            - name: CASSANDRA_DC
+              value: datacenter1
+            - name: CASSANDRA_RACK
+              value: rack1
+            - name: MAX_HEAP_SIZE
+              value: {{ .Values.maxHeapSize | quote }}
+            - name: HEAP_NEWSIZE
+              value: {{ .Values.heapNewSize | quote }}
+          ports:
+            - containerPort: 7000
+              name: intra-node
+            - containerPort: 9042
+              name: cql
+          # The CQL port only opens once the node has joined the cluster.
+          # Joining a cluster that holds data can take a long time, so allow
+          # up to an hour.
+          startupProbe:
+            tcpSocket:
+              port: cql
+            periodSeconds: 10
+            failureThreshold: 360
+          # Cassandra creates its default superuser about ten seconds after
+          # the CQL port opens. Wait for a few successes so that clients
+          # started after `helm --wait` can log in.
+          readinessProbe:
+            tcpSocket:
+              port: cql
+            periodSeconds: 10
+            successThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: cql
+            periodSeconds: 30
+            failureThreshold: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: ["nodetool", "drain"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/cassandra
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- with .Values.persistence.storageClass }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}

@@ -7,7 +7,7 @@ This extra installs InfluxDB v1 via the [Official Helm
 chart](https://github.com/influxdata/helm-charts)
 
 This extra installs Grafana via the [Grafana Community Helm
-chart](https://github.com/grafana/helm-charts)
+chart](https://github.com/grafana-community/helm-charts)
 
 ### Usage
 

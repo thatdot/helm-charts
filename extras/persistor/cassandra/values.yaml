@@ -1,0 +1,34 @@
+# Default values for the example Cassandra persistor.
+#
+# Every node requires a username and password. Cassandra creates its default
+# superuser: username `cassandra`, password `cassandra`. Change that password
+# before storing real data.
+
+# Official Apache Cassandra image from Docker Hub.
+image:
+  repository: cassandra
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# Number of Cassandra nodes
+replicaCount: 1
+
+persistence:
+  size: 100Gi
+  # Uses the cluster's default storage class when empty
+  storageClass: ""
+
+resources:
+  requests:
+    cpu: 3
+    memory: 7Gi
+  limits:
+    cpu: 3
+    memory: 7Gi
+
+# JVM heap. Set these explicitly: Cassandra otherwise sizes its heap from the
+# memory of the Kubernetes node rather than from the container's memory limit.
+# Keep maxHeapSize at or below half of the memory limit.
+maxHeapSize: 3G
+heapNewSize: 800M

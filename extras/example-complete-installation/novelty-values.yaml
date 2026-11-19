@@ -1,6 +1,19 @@
-licenseKey: ""
+# Secret holding the Novelty license key (see README.md)
+licenseKeySecret:
+  name: novelty-license
+  key: license-key
 
-image:
-  repository: ""
+# Pull secret for the thatDot registry (see README.md)
+imagePullSecrets:
+  - name: novelty-registry
 
-imagePullSecrets: []
+# Settings for using cassandra cluster as persistor
+cassandra:
+  enabled: true
+  endpoints: "quine-enterprise-store-cassandra"
+  plaintextAuth:
+    enabled: true
+    username: cassandra
+    password: cassandra
+  shouldCreateKeyspace: true
+  shouldCreateTables: true

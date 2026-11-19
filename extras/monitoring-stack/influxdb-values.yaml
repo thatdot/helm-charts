@@ -5,3 +5,8 @@ initScripts:
     metrics.sh: |
       #!/bin/bash
       influx --execute 'create database metrics'
+
+# The chart's default tag (1.8.10-alpine) has no arm64 image; this one runs on
+# both amd64 and arm64 (e.g. Apple Silicon).
+image:
+  tag: "1.8.10"

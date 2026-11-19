@@ -46,7 +46,7 @@ as part of an evaluation agreement or purchase order.
 
 This directory contains an example installation of thatDot Quine Enterprise and
 Novelty. The included Cassandra persistor is required by the thatDot Quine
-Enterprise cluster. Also included are optional components of a RedPanda (Kafka)
+Enterprise cluster and is also used by Novelty. Also included are optional components of a RedPanda (Kafka)
 cluster for ingest/output and a monitoring stack consisting of InfluxDB and
 Grafana.
 
@@ -55,7 +55,7 @@ Grafana.
 [README.md](extras/persistor/README.md)
 
 Use these scripts to easily setup a cassandra compatible persistor for a Quine
-instance or Quine Enterprise cluster.
+instance, Quine Enterprise cluster, or Novelty instance.
 
 ### Monitoring Stack
 

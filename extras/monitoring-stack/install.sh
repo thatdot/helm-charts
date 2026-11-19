@@ -12,19 +12,22 @@ fi
 
 ns="$KUBE_NAMESPACE"
 
+# Run from this directory so the relative paths below resolve
+cd "$(dirname "$0")" || exit 1
+
 # Metrics and Monitoring
 
 # InfluxDB Helm chart
-helm repo add influxdata https://helm.influxdata.com/
-helm upgrade influx influxdata/influxdb \
+helm upgrade influx influxdb \
+    --repo https://helm.influxdata.com/ \
     --install \
     --namespace "$ns" \
     --values influxdb-values.yaml
 
 # Grafana Helm chart
 kubectl apply -f grafana-secret.yaml --namespace "$ns"
-helm repo add grafana https://grafana.github.io/helm-charts
-helm upgrade grafana grafana/grafana \
+helm upgrade grafana grafana \
+    --repo https://grafana-community.github.io/helm-charts \
     --install \
     --namespace "$ns" \
     --values grafana-values.yaml

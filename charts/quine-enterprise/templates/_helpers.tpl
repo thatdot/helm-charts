@@ -83,6 +83,16 @@ not share the persistor.
 
 
 {{/*
+Log Level Configuration Section
+*/}}
+{{- define "quine-enterprise.logLevelConfiguration" -}}
+-Dthatdot.loglevel={{ .Values.thatdot.logLevel }}
+{{- with .Values.thatdot.auditLogLevel }}
+-Dthatdot.audit.loglevel={{ . }}
+{{- end }}
+{{- end }}
+
+{{/*
 Persistence Config Section
 */}}
 {{- define "quine-enterprise.persistenceConfiguration" -}}
@@ -156,7 +166,7 @@ Cassandra Auth Environment
 - name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_class
   value: PlainTextAuthProvider
 - name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_username
-  value: {{ .Values.cassandra.plaintextAuth.username }}
+  value: {{ .Values.cassandra.plaintextAuth.username | quote }}
 - name: CONFIG_FORCE_datastax__java__driver_advanced_auth__provider_password
 {{- if .Values.cassandra.plaintextAuth.passwordExistingSecret }}
   valueFrom:
@@ -166,7 +176,7 @@ Cassandra Auth Environment
       key: {{ required "If using cassandra.plaintextAuth.passwordExistingSecret, key must be set" 
               .Values.cassandra.plaintextAuth.passwordExistingSecret.key }}
 {{- else }}
-  value: {{ .Values.cassandra.plaintextAuth.password }}
+  value: {{ .Values.cassandra.plaintextAuth.password | quote }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -191,38 +201,47 @@ exec:
 {{- end }}
 
 {{/*
-Liveness and Readiness Probes
+Health check used by every probe.
+- Without mTLS the kubelet calls the liveness endpoint.
+- With mTLS the kubelet cannot call the webserver:
+  - with the health endpoints enabled, the check runs inside the container
+    against them on the loopback address;
+  - otherwise it only checks that the webserver port accepts connections.
+*/}}
+{{- define "quine-enterprise.probeHandler" -}}
+{{- if not .Values.webserver.useMTls.enabled -}}
+httpGet:
+  path: /api/v2/system/liveness
+  port: {{ .Values.webserver.port }}
+  {{- if .Values.webserver.useTls }}
+  scheme: HTTPS
+  {{- end }}
+{{- else if .Values.webserver.useMTls.healthEndpoints.enabled -}}
+{{ include "quine-enterprise.loopbackHealthExec" . }}
+{{- else -}}
+tcpSocket:
+  port: {{ .Values.webserver.port }}
+{{- end }}
+{{- end }}
+
+{{/*
+Startup, Liveness and Readiness Probes
+The startup probe gives a member up to 5 minutes to start (for example while
+the keyspace and tables are created) before the liveness probe takes over.
+There is nothing to probe when the webserver is disabled.
 */}}
 {{- define "quine-enterprise.probes" -}}
-{{- if .Values.webserver.useMTls.enabled }}
-{{- if .Values.webserver.useMTls.healthEndpoints.enabled }}
+{{- if .Values.webserver.enabled -}}
+startupProbe:
+  {{- include "quine-enterprise.probeHandler" . | nindent 2 }}
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 60
 livenessProbe:
-  {{- include "quine-enterprise.loopbackHealthExec" . | nindent 2 }}
-  initialDelaySeconds: 5
+  {{- include "quine-enterprise.probeHandler" . | nindent 2 }}
   timeoutSeconds: 10
 readinessProbe:
-  {{- include "quine-enterprise.loopbackHealthExec" . | nindent 2 }}
-  initialDelaySeconds: 5
-  timeoutSeconds: 10
-{{- end }}
-{{- else }}
-livenessProbe:
-  httpGet:
-    path: /api/v2/system/liveness
-    port: 8080
-    {{- if .Values.webserver.useTls }}
-    scheme: HTTPS
-    {{- end }}
-  initialDelaySeconds: 5
-  timeoutSeconds: 10
-readinessProbe:
-  httpGet:
-    path: /api/v2/system/liveness
-    port: 8080
-    {{- if .Values.webserver.useTls }}
-    scheme: HTTPS
-    {{- end }}
-  initialDelaySeconds: 5
+  {{- include "quine-enterprise.probeHandler" . | nindent 2 }}
   timeoutSeconds: 10
 {{- end }}
 {{- end }}
@@ -285,6 +304,12 @@ OIDC Configuration Section
 -Dquine.auth.oidc.full.provider.authorization-url="{{ .Values.oidc.provider.authorizationUrl }}"
 -Dquine.auth.oidc.full.provider.token-url="{{ .Values.oidc.provider.tokenUrl }}"
 -Dquine.auth.oidc.full.provider.login-path="{{ .Values.oidc.provider.loginPath }}"
+{{- with .Values.oidc.provider.accessTokenAudience }}
+-Dquine.auth.oidc.full.provider.access-token-audience="{{ . }}"
+{{- end }}
+{{- with .Values.oidc.provider.resourceUri }}
+-Dquine.auth.oidc.full.provider.resource-uri="{{ . }}"
+{{- end }}
 -Dquine.auth.session.expiration-seconds={{ .Values.oidc.session.expirationSeconds }}
 -Dquine.auth.session.secure-cookies={{ .Values.oidc.session.secureCookies }}
 {{- end }}
