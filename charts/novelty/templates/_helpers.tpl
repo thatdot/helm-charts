@@ -164,6 +164,25 @@ Cassandra Environment: endpoints and, if enabled, plaintext auth
 {{- end }}
 
 {{/*
+Exec action for the loopback health endpoint. The health endpoints listen on 127.0.0.1, which the kubelet
+cannot reach with httpGet. The command needs only bash: it sends one HTTP request through /dev/tcp and
+succeeds when the status code is 2xx, so it works in images that have no curl. A status line with no reason
+phrase leaves a carriage return on the code, which the command removes.
+*/}}
+{{- define "novelty.loopbackHealthExec" -}}
+exec:
+  command:
+    - /bin/bash
+    - -c
+    - >-
+      exec 3<>/dev/tcp/127.0.0.1/{{ .Values.webserver.useMTls.healthEndpoints.port }}
+      && printf 'GET /api/v2/system/liveness HTTP/1.0\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3
+      && read -r _ code _ <&3
+      && code=${code%$'\r'}
+      && [[ $code == 2[0-9][0-9] ]]
+{{- end }}
+
+{{/*
 Webserver Config Section
 */}}
 {{- define "novelty.webserverConfiguration" -}}
@@ -202,11 +221,7 @@ webserver, so the check runs inside the container against the health endpoints.
 */}}
 {{- define "novelty.probeHandler" -}}
 {{- if .Values.webserver.useMTls.enabled }}
-exec:
-  command:
-    - /bin/sh
-    - -c
-    - curl --silent -f -o /dev/null http://127.0.0.1:{{ .Values.webserver.useMTls.healthEndpoints.port }}/api/v2/system/liveness
+{{ include "novelty.loopbackHealthExec" . }}
 {{- else }}
 httpGet:
   path: /api/v2/system/liveness
