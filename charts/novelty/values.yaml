@@ -202,7 +202,8 @@ webserverAdvertise:
 # When webserver.useMTls.enabled is true:
 # - If healthEndpoints.enabled is true, health probes will use HTTP on the loopback
 #   address with the configured healthEndpoints.port
-# - If healthEndpoints.enabled is false, health probes will be disabled
+# - If healthEndpoints.enabled is false, the probes only check that the webserver
+#   port accepts connections
 
 # Whitespace-separated jdk arguments injected via JDK_JAVA_OPTIONS
 extraJdkArgs: ""

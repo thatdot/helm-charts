@@ -201,19 +201,26 @@ exec:
 {{- end }}
 
 {{/*
-Health check used by every probe. With mTLS the kubelet cannot call the
-webserver, so the check runs inside the container against the health endpoints.
+Health check used by every probe.
+- Without mTLS the kubelet calls the liveness endpoint.
+- With mTLS the kubelet cannot call the webserver, so the check runs inside the
+  container against the loopback health endpoints.
+- With mTLS and no health endpoints, all that can be checked from outside is
+  that the webserver port accepts connections.
 */}}
 {{- define "quine-enterprise.probeHandler" -}}
-{{- if .Values.webserver.useMTls.enabled -}}
-{{ include "quine-enterprise.loopbackHealthExec" . }}
-{{- else -}}
+{{- if not .Values.webserver.useMTls.enabled -}}
 httpGet:
   path: /api/v2/system/liveness
   port: {{ .Values.webserver.port }}
   {{- if .Values.webserver.useTls }}
   scheme: HTTPS
   {{- end }}
+{{- else if .Values.webserver.useMTls.healthEndpoints.enabled -}}
+{{ include "quine-enterprise.loopbackHealthExec" . }}
+{{- else -}}
+tcpSocket:
+  port: {{ .Values.webserver.port }}
 {{- end }}
 {{- end }}
 
@@ -223,11 +230,10 @@ The startup probe gives a member up to 5 minutes to start (for example while
 the keyspace and tables are created) before the liveness probe takes over.
 */}}
 {{- define "quine-enterprise.probes" -}}
-{{- if or (not .Values.webserver.useMTls.enabled) .Values.webserver.useMTls.healthEndpoints.enabled }}
 startupProbe:
   {{- include "quine-enterprise.probeHandler" . | nindent 2 }}
   periodSeconds: 5
-  timeoutSeconds: 10
+  timeoutSeconds: 5
   failureThreshold: 60
 livenessProbe:
   {{- include "quine-enterprise.probeHandler" . | nindent 2 }}
@@ -235,7 +241,6 @@ livenessProbe:
 readinessProbe:
   {{- include "quine-enterprise.probeHandler" . | nindent 2 }}
   timeoutSeconds: 10
-{{- end }}
 {{- end }}
 
 {{/*
