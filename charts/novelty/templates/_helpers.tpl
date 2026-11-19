@@ -218,10 +218,10 @@ Webserver Advertise Config Section
 {{/*
 Health check used by every probe.
 - Without mTLS the kubelet calls the liveness endpoint.
-- With mTLS the kubelet cannot call the webserver, so the check runs inside the
-  container against the loopback health endpoints.
-- With mTLS and no health endpoints, all that can be checked from outside is
-  that the webserver port accepts connections.
+- With mTLS the kubelet cannot call the webserver:
+  - with the health endpoints enabled, the check runs inside the container
+    against them on the loopback address;
+  - otherwise it only checks that the webserver port accepts connections.
 */}}
 {{- define "novelty.probeHandler" -}}
 {{- if not .Values.webserver.useMTls.enabled -}}
@@ -243,8 +243,10 @@ tcpSocket:
 Startup, Liveness and Readiness Probes
 The startup probe gives Novelty up to 5 minutes to start (for example while
 the keyspace and tables are created) before the liveness probe takes over.
+There is nothing to probe when the webserver is disabled.
 */}}
 {{- define "novelty.probes" -}}
+{{- if .Values.webserver.enabled -}}
 startupProbe:
   {{- include "novelty.probeHandler" . | nindent 2 }}
   periodSeconds: 5
@@ -256,4 +258,5 @@ livenessProbe:
 readinessProbe:
   {{- include "novelty.probeHandler" . | nindent 2 }}
   timeoutSeconds: 10
+{{- end }}
 {{- end }}
