@@ -58,8 +58,8 @@ Log into the Grafana server with browser. The "Quine - Monitor a Recipe" dashboa
 
 Grafana downloads the dashboard each time its pod starts, from the `url` in `grafana-values.yaml`, so the
 cluster needs outbound HTTPS access. The Grafana pod does not start if the download fails. For a cluster
-without that access, remove the `dashboards` section from `grafana-values.yaml` before installing, then
-download the file yourself and import it in the Grafana UI.
+without that access, remove the `dashboardProviders` and `dashboards` sections from `grafana-values.yaml`
+before installing, then download the file yourself and import it in the Grafana UI.
 
 **Note:** the defualt username/password is intended for internal use only. A stronger
 password should be used if exposing the Grafana to the open internet.
