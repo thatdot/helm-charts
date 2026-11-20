@@ -10,7 +10,8 @@ datasources:
     - name: Quine Enterprise Metrics (InfluxDB)
       # <string, required> datasource type. Required
       type: influxdb
-      # <string> the published dashboard refers to its datasource by this uid
+      # <string> the published dashboard refers to its datasource by this uid, which is the one Grafana
+      # derives for a datasource named "InfluxDB"
       uid: P951FEA4DE68E13C5
       # <string, required> access mode. proxy or direct (Server or Browser in the UI). Required
       access: proxy
@@ -47,5 +48,7 @@ dashboardProviders:
 dashboards:
   default:
     quine-dashboard:
-      # The current thatDot dashboard for InfluxDB, downloaded each time the Grafana pod starts
+      # thatDot's published dashboard for InfluxDB
       url: https://thatdot-grafana-dashboards.s3.us-west-2.amazonaws.com/dashboards/quine/quine-influx.json
+      # Replaces the Grafana chart's default "-skf", which skips TLS certificate verification
+      curlOptions: "-sf"
