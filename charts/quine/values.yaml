@@ -129,6 +129,7 @@ image:
   repository: thatdot/quine
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
+  # The liveness and readiness probes call /api/v2/system/liveness, which needs Quine 2.0.0 or later.
   tag: ""
 
 imagePullSecrets: []
