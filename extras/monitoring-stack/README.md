@@ -54,7 +54,11 @@ Port forward the deployment to access locally:
 kubectl -n thatdot-example port-forward deploy/grafana 3000:3000
 ```
 
-Log into the Grafana server with browser. "Quine" dashboard is preconfigured.
+Log into the Grafana server with browser. The "Quine - Monitor a Recipe" dashboard is preconfigured.
+
+The dashboard is not stored in this repository. The Grafana pod downloads the current version each time it
+starts, from the `dashboards.default.quine-dashboard.url` set in `grafana-values.yaml`, so the cluster needs
+outbound HTTPS access. Without that access, download the file from that URL and import it in the Grafana UI.
 
 **Note:** the defualt username/password is intended for internal use only. A stronger
 password should be used if exposing the Grafana to the open internet.

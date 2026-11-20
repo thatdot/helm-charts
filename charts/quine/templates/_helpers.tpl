@@ -163,7 +163,7 @@ exec:
     - -c
     - >-
       exec 3<>/dev/tcp/127.0.0.1/{{ .Values.webserver.useMTls.healthEndpoints.port }}
-      && printf 'GET /api/v1/admin/liveness HTTP/1.0\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3
+      && printf 'GET /api/v2/system/liveness HTTP/1.0\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3
       && read -r _ code _ <&3
       && code=${code%$'\r'}
       && [[ $code == 2[0-9][0-9] ]]
@@ -187,7 +187,7 @@ readinessProbe:
 {{- else }}
 livenessProbe:
   httpGet:
-    path: /api/v1/admin/liveness
+    path: /api/v2/system/liveness
     port: 8080
     {{- if .Values.webserver.useTls }}
     scheme: HTTPS
@@ -196,7 +196,7 @@ livenessProbe:
   timeoutSeconds: 10
 readinessProbe:
   httpGet:
-    path: /api/v1/admin/liveness
+    path: /api/v2/system/liveness
     port: 8080
     {{- if .Values.webserver.useTls }}
     scheme: HTTPS
