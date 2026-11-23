@@ -3,7 +3,7 @@
 Welcome to the thatDot Quine Enterprise Helm Chart. Use this chart to easily
 install and configure a thatDot Quine Enterprise cluster on Kubernetes.
 
-[Quine Enterprise Docs Site](https://docs.thatdot.com/streaming-graph/overview/index.html)
+[Quine Enterprise Docs Site](https://docs.thatdot.com/quine-enterprise/)
 
 ## Prerequisites
 
