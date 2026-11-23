@@ -34,7 +34,7 @@ as part of an evaluation agreement or purchase order.
 [README.md](charts/novelty/README.md)
 
 The Novelty Helm chart can be used to deploy and manage thatDot
-[Novelty](https://docs.thatdot.com/novelty/getting-started/novelty-main-concepts.html)
+[Novelty](https://docs.thatdot.com/novelty/)
 on Kubernetes. Novelty requires a valid license key provided by thatDot
 as part of an evaluation agreement or purchase order.
 
